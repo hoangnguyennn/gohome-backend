@@ -1,4 +1,9 @@
-import { DistrictTypes, UserTypes, WardTypes } from './enums';
+import {
+  DistrictTypes,
+  PostVerifyStatuses,
+  UserTypes,
+  WardTypes
+} from './enums';
 
 export interface ITokenPayload {
   userId: string;
@@ -39,6 +44,62 @@ export interface IWardResponse {
   district?: IDistrictResponse;
 }
 
+export interface IPostRequest {
+  title: string;
+  categoryId: string;
+  wardId: string;
+  price: number;
+  commission: number;
+  acreage: number;
+  bedroom: number;
+  bathroom: number;
+  floor: number;
+  description: string;
+  ownerName: string;
+  ownerPhone: string;
+  ownerAddress: string;
+  isCheap: boolean;
+  isFeatured: boolean;
+  imagesId: string[];
+}
+
+export interface IPostCreate extends IPostRequest {
+  code: string;
+  slug: string;
+  verifyStatus: PostVerifyStatuses;
+  createdById: string;
+}
+
+export interface IPostResponse {
+  id: string;
+  code: string;
+  title: string;
+  slug: string;
+  price: number;
+  commission: number;
+  acreage: number;
+  bedroom: number;
+  bathroom: number;
+  floor: number;
+  description: string;
+  ownerName: string;
+  ownerPhone: string;
+  ownerAddress: string;
+  verifyStatus: PostVerifyStatuses;
+  denyReason: string;
+  isCheap: boolean;
+  isFeatured: boolean;
+  isRented: boolean;
+  hiddenAt?: string;
+  shownAt: string;
+
+  category?: ICategoryResponse;
+  ward?: IWardResponse;
+  createdBy?: IUserResponse;
+  updatedBy?: IUserResponse;
+  images?: IImageResponse[];
+}
+
 export interface IUserResponse {
   id: string;
   username: string;
@@ -46,4 +107,14 @@ export interface IUserResponse {
   avatar?: string;
   type: UserTypes;
   createdAt: string;
+}
+
+export interface IImageCreate {
+  url: string;
+  originalUrl: string;
+}
+
+export interface IImageResponse {
+  id: string;
+  url: string;
 }
