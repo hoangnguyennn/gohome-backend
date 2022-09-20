@@ -27,6 +27,6 @@ export enum DistrictTypes {
 
 export enum PostVerifyStatuses {
   PENDING = 'PENDING',
-  APPROVE = 'APPROVE',
-  DENY = 'DENY'
+  APPROVED = 'APPROVED',
+  DENIED = 'DENIED'
 }

@@ -26,7 +26,11 @@ const CategoryService = {
     console.log('update');
   },
   increaseCount: (id: string) => {
-    return Category.findByIdAndUpdate(id, { $inc: { count: 1 } });
+    return Category.findByIdAndUpdate(
+      id,
+      { $inc: { count: 1 } },
+      { new: true }
+    );
   },
   delete: () => {
     console.log('delete');

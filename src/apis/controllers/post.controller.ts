@@ -12,6 +12,10 @@ const PostController = {
     const posts = await PostService.getList();
     return success(res, { posts: posts.map(mapPostToResponse) });
   },
+  getRentedList: async (req: Request, res: Response) => {
+    const posts = await PostService.getRentedList();
+    return success(res, { posts: posts.map(mapPostToResponse) });
+  },
   create: async (req: Request, res: Response) => {
     const { userId } = req.user;
     const postRequest: IPostRequest = req.body;
@@ -29,6 +33,25 @@ const PostController = {
     const newPost = await PostService.create(postCreate);
 
     return success(res, { post: mapPostToResponse(newPost) });
+  },
+  approve: async (req: Request, res: Response) => {
+    const { userId } = req.user;
+    const { id } = req.params;
+    const post = await PostService.approve(id, userId);
+    return success(res, { post: mapPostToResponse(post) });
+  },
+  deny: async (req: Request, res: Response) => {
+    const { userId } = req.user;
+    const { id } = req.params;
+    const { reason } = req.body;
+    const post = await PostService.deny(id, reason, userId);
+    return success(res, { post: mapPostToResponse(post) });
+  },
+  markAsRented: async (req: Request, res: Response) => {
+    const { userId } = req.user;
+    const { id } = req.params;
+    const post = await PostService.markAsRented(id, userId);
+    return success(res, { post: mapPostToResponse(post) });
   }
 };
 
