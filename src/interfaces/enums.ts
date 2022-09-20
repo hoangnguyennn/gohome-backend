@@ -1,5 +1,7 @@
 export enum CollectionNames {
-  USER = 'users'
+  DISTRICT = 'districts',
+  USER = 'users',
+  WARD = 'wards'
 }
 
 export enum UserTypes {
