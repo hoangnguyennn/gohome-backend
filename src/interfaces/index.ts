@@ -4,6 +4,17 @@ export interface ITokenPayload {
   userId: string;
 }
 
+export interface ICategoryRequest {
+  name: string;
+  code: string;
+}
+
+export interface ICategoryResponse {
+  id: string;
+  name: string;
+  code: string;
+}
+
 export interface IDistrictRequest {
   name: string;
   type: DistrictTypes;

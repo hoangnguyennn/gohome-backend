@@ -1,4 +1,5 @@
 export enum CollectionNames {
+  CATEGORY = 'categories',
   DISTRICT = 'districts',
   USER = 'users',
   WARD = 'wards'

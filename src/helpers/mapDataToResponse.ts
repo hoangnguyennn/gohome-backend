@@ -1,5 +1,10 @@
-import { IDistrictResponse, IUserResponse, IWardResponse } from '~/interfaces';
-import { IDistrict, IUser, IWard } from '~/interfaces/IDocument';
+import {
+  ICategoryResponse,
+  IDistrictResponse,
+  IUserResponse,
+  IWardResponse
+} from '~/interfaces';
+import { ICategory, IDistrict, IUser, IWard } from '~/interfaces/IDocument';
 
 export const mapUserToResponse = (user: IUser) => {
   const { _id, username, fullName, avatar, type, createdAt } = user;
@@ -26,4 +31,9 @@ export const mapWardToResponse = (ward: IWard) => {
     type,
     district: district && mapDistrictToResponse(district)
   } as IWardResponse;
+};
+
+export const mapCategoryToResponse = (category: ICategory) => {
+  const { _id, name, code } = category;
+  return { id: _id.toString(), name, code } as ICategoryResponse;
 };
