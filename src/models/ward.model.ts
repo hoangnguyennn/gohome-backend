@@ -6,7 +6,9 @@ const wardSchema = new Schema<IWard>(
   {
     name: { type: String, required: true },
     type: { type: String, enum: WardTypes, required: true },
-    districtId: { type: Schema.Types.ObjectId, required: true }
+    districtId: { type: Schema.Types.ObjectId, required: true },
+    isHide: { type: Boolean, default: false },
+    deletedAt: { type: String, required: false }
   },
   {
     timestamps: {

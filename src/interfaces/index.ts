@@ -14,8 +14,14 @@ export interface ICategoryRequest {
   code: string;
 }
 
-export interface ICategoryResponse {
+export interface IBaseResponse {
   id: string;
+  isHide: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ICategoryResponse extends IBaseResponse {
   name: string;
   code: string;
 }
@@ -25,8 +31,7 @@ export interface IDistrictRequest {
   type: DistrictTypes;
 }
 
-export interface IDistrictResponse {
-  id: string;
+export interface IDistrictResponse extends IBaseResponse {
   name: string;
   type: DistrictTypes;
 }
@@ -37,8 +42,7 @@ export interface IWardRequest {
   districtId: string;
 }
 
-export interface IWardResponse {
-  id: string;
+export interface IWardResponse extends IBaseResponse {
   name: string;
   type: WardTypes;
   district?: IDistrictResponse;
@@ -70,8 +74,7 @@ export interface IPostCreate extends IPostRequest {
   createdById: string;
 }
 
-export interface IPostResponse {
-  id: string;
+export interface IPostResponse extends IBaseResponse {
   code: string;
   title: string;
   slug: string;
@@ -100,8 +103,7 @@ export interface IPostResponse {
   images?: IImageResponse[];
 }
 
-export interface IUserResponse {
-  id: string;
+export interface IUserResponse extends IBaseResponse {
   username: string;
   fullName?: string;
   avatar?: string;
@@ -114,7 +116,6 @@ export interface IImageCreate {
   originalUrl: string;
 }
 
-export interface IImageResponse {
-  id: string;
+export interface IImageResponse extends IBaseResponse {
   url: string;
 }

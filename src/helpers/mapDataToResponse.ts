@@ -16,35 +16,50 @@ import {
 } from '~/interfaces/IDocument';
 
 export const mapUserToResponse = (user: IUser) => {
-  const { _id, username, fullName, avatar, type, createdAt } = user;
   return {
-    id: _id.toString(),
-    username,
-    fullName,
-    avatar,
-    type,
-    createdAt
+    id: user._id.toString(),
+    username: user.username,
+    fullName: user.fullName,
+    avatar: user.avatar,
+    type: user.type,
+    isHide: user.isHide,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
   } as IUserResponse;
 };
 
 export const mapDistrictToResponse = (district: IDistrict) => {
-  const { _id, name, type } = district;
-  return { id: _id.toString(), name, type } as IDistrictResponse;
+  return {
+    id: district._id.toString(),
+    name: district.name,
+    type: district.type,
+    isHide: district.isHide,
+    createdAt: district.createdAt,
+    updatedAt: district.updatedAt
+  } as IDistrictResponse;
 };
 
 export const mapWardToResponse = (ward: IWard) => {
-  const { _id, name, type, district } = ward;
   return {
-    id: _id.toString(),
-    name,
-    type,
-    district: district && mapDistrictToResponse(district)
+    id: ward._id.toString(),
+    name: ward.name,
+    type: ward.type,
+    district: ward.district && mapDistrictToResponse(ward.district),
+    isHide: ward.isHide,
+    createdAt: ward.createdAt,
+    updatedAt: ward.updatedAt
   } as IWardResponse;
 };
 
 export const mapCategoryToResponse = (category: ICategory) => {
-  const { _id, name, code } = category;
-  return { id: _id.toString(), name, code } as ICategoryResponse;
+  return {
+    id: category._id.toString(),
+    name: category.name,
+    code: category.code,
+    isHide: category.isHide,
+    createdAt: category.createdAt,
+    updatedAt: category.updatedAt
+  } as ICategoryResponse;
 };
 
 export const mapPostToResponse = (post: IPost) => {
@@ -68,8 +83,11 @@ export const mapPostToResponse = (post: IPost) => {
     isCheap: post.isCheap,
     isFeatured: post.isFeatured,
     isRented: post.isRented,
+    isHide: post.isHide,
     hiddenAt: post.hiddenAt,
     shownAt: post.shownAt,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
     category: post.category && mapCategoryToResponse(post.category),
     ward: post.ward && mapWardToResponse(post.ward),
     createdBy: post.createdBy && mapUserToResponse(post.createdBy),
@@ -81,6 +99,9 @@ export const mapPostToResponse = (post: IPost) => {
 export const mapImageToResponse = (image: IImage) => {
   return {
     id: image._id.toString(),
-    url: image.url
+    url: image.url,
+    isHide: image.isHide,
+    createdAt: image.createdAt,
+    updatedAt: image.updatedAt
   } as IImageResponse;
 };

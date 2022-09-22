@@ -6,7 +6,9 @@ const categorySchema = new Schema<ICategory>(
   {
     name: { type: String, required: true },
     code: { type: String, required: true },
-    count: { type: Number, default: 0 }
+    count: { type: Number, default: 0 },
+    isHide: { type: Boolean, default: false },
+    deletedAt: { type: String, required: false }
   },
   {
     timestamps: {

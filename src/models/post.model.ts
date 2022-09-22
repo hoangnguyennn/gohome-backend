@@ -24,11 +24,13 @@ const postSchema = new Schema<IPost>(
     isCheap: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
     isRented: { type: Boolean, default: false },
+    isHide: { type: Boolean, default: false },
     createdById: { type: Schema.Types.ObjectId, required: true },
     updatedById: { type: Schema.Types.ObjectId, required: false },
     hiddenAt: { type: String, required: false },
     shownAt: { type: String, default: new Date().toString() },
-    imagesId: [{ type: Schema.Types.ObjectId, required: true }]
+    imagesId: [{ type: Schema.Types.ObjectId, required: true }],
+    deletedAt: { type: String, required: false }
   },
   {
     timestamps: {

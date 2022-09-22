@@ -5,7 +5,9 @@ import { IDistrict } from '~/interfaces/IDocument';
 const districtSchema = new Schema<IDistrict>(
   {
     name: { type: String, required: true },
-    type: { type: String, enum: DistrictTypes, required: true }
+    type: { type: String, enum: DistrictTypes, required: true },
+    isHide: { type: Boolean, default: false },
+    deletedAt: { type: String, required: false }
   },
   {
     timestamps: {
