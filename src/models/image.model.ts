@@ -6,6 +6,7 @@ const imageSchema = new Schema<IImage>(
   {
     url: { type: String, required: true },
     originalUrl: { type: String, required: true },
+    publicId: { type: String, required: true },
     isHide: { type: Boolean, default: false },
     deletedAt: { type: String, required: false }
   },

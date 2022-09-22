@@ -11,5 +11,8 @@ export default {
   mongoUri: String(process.env.MONGODB_URI),
   maxOfSalt: Number(process.env.MAX_OF_SALT),
   tokenSecret: String(process.env.TOKEN_SECRET),
-  tokenExpiresIn: process.env.TOKEN_EXPIRES_IN
+  tokenExpiresIn: process.env.TOKEN_EXPIRES_IN,
+  cloudinaryName: String(process.env.CLOUDINARY_NAME),
+  cloudinaryKey: String(process.env.CLOUDINARY_KEY),
+  cloudinarySecret: String(process.env.CLOUDINARY_SECRET)
 };

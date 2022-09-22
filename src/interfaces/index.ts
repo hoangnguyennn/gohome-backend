@@ -114,6 +114,7 @@ export interface IUserResponse extends IBaseResponse {
 export interface IImageCreate {
   url: string;
   originalUrl: string;
+  publicId: string;
 }
 
 export interface IImageResponse extends IBaseResponse {

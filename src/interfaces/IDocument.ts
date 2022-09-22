@@ -77,4 +77,5 @@ export interface ICategory extends BaseDocument {
 export interface IImage extends BaseDocument {
   url: string;
   originalUrl: string;
+  publicId: string;
 }
