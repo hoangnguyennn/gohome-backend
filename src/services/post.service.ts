@@ -24,6 +24,20 @@ const PostService = {
       .populate('updatedBy')
       .populate('images');
   },
+  getById: async (id: string) => {
+    const post = await Post.findById(id)
+      .populate('category')
+      .populate({ path: 'ward', populate: 'district' })
+      .populate('createdBy')
+      .populate('updatedBy')
+      .populate('images');
+
+    if (!post) {
+      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+    }
+
+    return post;
+  },
   create: async (post: IPostCreate) => {
     const newPost = await Post.create(post);
     return Post.findById(newPost._id)

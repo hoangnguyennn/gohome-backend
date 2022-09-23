@@ -16,6 +16,11 @@ const PostController = {
     const posts = await PostService.getRentedList();
     return success(res, { posts: posts.map(mapPostToResponse) });
   },
+  getById: async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const post = await PostService.getById(id);
+    return success(res, { post: mapPostToResponse(post) });
+  },
   create: async (req: Request, res: Response) => {
     const { userId } = req.user;
     const postRequest: IPostRequest = req.body;

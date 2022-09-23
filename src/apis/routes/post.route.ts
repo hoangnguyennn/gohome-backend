@@ -12,6 +12,12 @@ router
   .post('/', catcherWrapper(PostController.create))
   .get('/rented', catcherWrapper(PostController.getRentedList))
 
+  .get(
+    '/:id',
+    catcherWrapper(checkValidObjectId),
+    catcherWrapper(PostController.getById)
+  )
+
   .post(
     '/:id/approve',
     catcherWrapper(checkValidObjectId),
