@@ -19,7 +19,7 @@ const postSchema = new Schema<IPost>(
     ownerName: { type: String, required: true },
     ownerPhone: { type: String, required: true },
     ownerAddress: { type: String, required: true },
-    verifyStatus: { type: String, enum: PostVerifyStatuses, required: true },
+    verifyStatus: { type: Number, enum: PostVerifyStatuses, required: true },
     denyReason: { type: String, required: false },
     isCheap: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },

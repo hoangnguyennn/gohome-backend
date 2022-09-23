@@ -9,7 +9,8 @@ import Post from '~/models/post.model';
 
 const PostService = {
   getList: () => {
-    return Post.find()
+    return Post.find({ isRented: false })
+      .sort({ verifyStatus: 1, createdAt: 1 })
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
@@ -18,6 +19,7 @@ const PostService = {
   },
   getRentedList: () => {
     return Post.find({ isRented: true })
+      .sort({ verifyStatus: 1, createdAt: 1 })
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
