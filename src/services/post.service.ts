@@ -63,7 +63,13 @@ const PostService = {
 
     return Post.findByIdAndUpdate(
       id,
-      { $set: { verifyStatus: PostVerifyStatuses.APPROVED, updatedById } },
+      {
+        $set: {
+          verifyStatus: PostVerifyStatuses.APPROVED,
+          updatedById,
+          denyReason: ''
+        }
+      },
       { new: true }
     )
       .populate('category')
