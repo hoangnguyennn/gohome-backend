@@ -18,6 +18,11 @@ export const checkAuth = async (
   }
 
   const token = String(bearerToken).split('Bearer ')[1];
+
+  if (!token) {
+    return unauthorized(next);
+  }
+
   const decoded = tokenUtil.decodeToken(token);
 
   if (!decoded) {
