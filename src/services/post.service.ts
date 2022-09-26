@@ -3,7 +3,7 @@ import {
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import { IPostCreate } from '~/interfaces';
+import { IPostCreate, IPostUpdate } from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
 import Post from '~/models/post.model';
 
@@ -123,6 +123,20 @@ const PostService = {
       { $set: { isRented: true, updatedById } },
       { new: true }
     )
+      .populate('category')
+      .populate({ path: 'ward', populate: 'district' })
+      .populate('createdBy')
+      .populate('updatedBy')
+      .populate('images');
+  },
+  updateById: async (id: string, postUpdate: IPostUpdate) => {
+    const post = await Post.findById(id);
+
+    if (!post) {
+      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+    }
+
+    return Post.findByIdAndUpdate(id, postUpdate, { new: true })
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')

@@ -18,6 +18,12 @@ router
     catcherWrapper(PostController.getById)
   )
 
+  .put(
+    '/:id',
+    catcherWrapper(checkValidObjectId),
+    catcherWrapper(PostController.updateById)
+  )
+
   .post(
     '/:id/approve',
     catcherWrapper(checkValidObjectId),

@@ -72,6 +72,11 @@ export interface IPostCreate extends IPostRequest {
   createdById: string;
 }
 
+export interface IPostUpdate extends IPostRequest {
+  verifyStatus: PostVerifyStatuses;
+  updatedById: string;
+}
+
 export interface IPostResponse extends IBaseResponse {
   code: string;
   title: string;

@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import { success } from '~/helpers/commonResponse';
 import { mapPostToResponse } from '~/helpers/mapDataToResponse';
-import { IPostCreate, IPostRequest } from '~/interfaces';
+import { IPostCreate, IPostRequest, IPostUpdate } from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
-import CategoryService from '~/services/category.service';
 import PostService from '~/services/post.service';
 
 const PostController = {
@@ -23,7 +22,6 @@ const PostController = {
   create: async (req: Request, res: Response) => {
     const { userId } = req.user;
     const postRequest: IPostRequest = req.body;
-    const category = await CategoryService.getById(postRequest.categoryId);
 
     const postCreate: IPostCreate = {
       ...postRequest,
@@ -31,9 +29,7 @@ const PostController = {
       createdById: userId
     };
 
-    await CategoryService.increaseCount(category._id);
     const newPost = await PostService.create(postCreate);
-
     return success(res, { post: mapPostToResponse(newPost) });
   },
   approve: async (req: Request, res: Response) => {
@@ -53,6 +49,20 @@ const PostController = {
     const { userId } = req.user;
     const { id } = req.params;
     const post = await PostService.markAsRented(id, userId);
+    return success(res, { post: mapPostToResponse(post) });
+  },
+  updateById: async (req: Request, res: Response) => {
+    const { userId } = req.user;
+    const { id } = req.params;
+    const postRequest: IPostRequest = req.body;
+
+    const postUpdate: IPostUpdate = {
+      ...postRequest,
+      verifyStatus: PostVerifyStatuses.PENDING,
+      updatedById: userId
+    };
+
+    const post = await PostService.updateById(id, postUpdate);
     return success(res, { post: mapPostToResponse(post) });
   }
 };
