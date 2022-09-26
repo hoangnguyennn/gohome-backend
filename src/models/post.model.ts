@@ -29,10 +29,10 @@ const postSchema = new Schema<IPost>(
     isHide: { type: Boolean, default: false },
     createdById: { type: Schema.Types.ObjectId, required: true },
     updatedById: { type: Schema.Types.ObjectId, required: false },
-    hiddenAt: { type: String, required: false },
-    shownAt: { type: String, default: new Date().toString() },
+    hiddenAt: { type: Date, required: false },
+    shownAt: { type: Date, default: Date.now },
     imagesId: [{ type: Schema.Types.ObjectId, required: true }],
-    deletedAt: { type: String, required: false }
+    deletedAt: { type: Date, required: false }
   },
   {
     timestamps: {

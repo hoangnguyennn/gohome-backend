@@ -8,9 +8,9 @@ import {
 
 export interface BaseDocument extends Document {
   isHide: boolean;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 }
 
 export interface IUser extends BaseDocument {
@@ -44,8 +44,8 @@ export interface IPost extends BaseDocument {
   isRented: boolean;
   createdById: Types.ObjectId;
   updatedById?: Types.ObjectId;
-  hiddenAt?: string;
-  shownAt: string;
+  hiddenAt?: Date;
+  shownAt: Date;
   imagesId: Types.ObjectId[];
 
   category?: ICategory;

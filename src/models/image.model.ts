@@ -8,7 +8,7 @@ const imageSchema = new Schema<IImage>(
     originalUrl: { type: String, required: true },
     publicId: { type: String, required: true },
     isHide: { type: Boolean, default: false },
-    deletedAt: { type: String, required: false }
+    deletedAt: { type: Date, required: false }
   },
   {
     timestamps: {

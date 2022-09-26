@@ -17,8 +17,8 @@ export interface ICategoryRequest {
 export interface IBaseResponse {
   id: string;
   isHide: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ICategoryResponse extends IBaseResponse {
@@ -64,6 +64,7 @@ export interface IPostRequest {
   ownerAddress: string;
   isCheap: boolean;
   isFeatured: boolean;
+  isRented?: boolean;
   imagesId: string[];
 }
 
@@ -96,8 +97,8 @@ export interface IPostResponse extends IBaseResponse {
   isCheap: boolean;
   isFeatured: boolean;
   isRented: boolean;
-  hiddenAt?: string;
-  shownAt: string;
+  hiddenAt?: Date;
+  shownAt: Date;
 
   category?: ICategoryResponse;
   ward?: IWardResponse;
@@ -111,7 +112,7 @@ export interface IUserResponse extends IBaseResponse {
   fullName?: string;
   avatar?: string;
   type: UserTypes;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface IImageCreate {

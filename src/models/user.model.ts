@@ -10,7 +10,7 @@ const userSchema = new Schema<IUser>(
     avatar: { type: String, required: false },
     type: { type: Number, enum: UserTypes, default: UserTypes.EMPLOYEE },
     isHide: { type: Boolean, default: false },
-    deletedAt: { type: String, required: false }
+    deletedAt: { type: Date, required: false }
   },
   {
     timestamps: {
