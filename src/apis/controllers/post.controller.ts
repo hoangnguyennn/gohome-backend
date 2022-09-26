@@ -5,7 +5,6 @@ import { IPostCreate, IPostRequest } from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
 import CategoryService from '~/services/category.service';
 import PostService from '~/services/post.service';
-import { getPostCode, getSlug } from '~/utils/converter';
 
 const PostController = {
   getList: async (req: Request, res: Response) => {
@@ -28,8 +27,6 @@ const PostController = {
 
     const postCreate: IPostCreate = {
       ...postRequest,
-      code: getPostCode(category),
-      slug: getSlug(postRequest.title),
       verifyStatus: PostVerifyStatuses.PENDING,
       createdById: userId
     };

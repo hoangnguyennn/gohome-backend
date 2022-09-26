@@ -1,6 +1,8 @@
 import { Schema, model } from 'mongoose';
 import { CollectionNames, PostVerifyStatuses } from '~/interfaces/enums';
 import { IPost } from '~/interfaces/IDocument';
+import { getPostCode, getSlug } from '~/utils/converter';
+import Category from './category.model';
 
 const postSchema = new Schema<IPost>(
   {
@@ -73,6 +75,17 @@ postSchema.virtual('images', {
   localField: 'imagesId',
   foreignField: '_id',
   justOne: false
+});
+
+postSchema.pre('validate', async function (next) {
+  const category = await Category.findById(this.categoryId);
+  this.code = getPostCode(category);
+  this.slug = getSlug(this.title);
+  next();
+});
+
+postSchema.post('save', function () {
+  Category.findByIdAndUpdate(this.categoryId, { $inc: { count: 1 } });
 });
 
 export default model<IPost>(CollectionNames.POST, postSchema);

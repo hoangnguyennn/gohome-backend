@@ -68,8 +68,6 @@ export interface IPostRequest {
 }
 
 export interface IPostCreate extends IPostRequest {
-  code: string;
-  slug: string;
   verifyStatus: PostVerifyStatuses;
   createdById: string;
 }
