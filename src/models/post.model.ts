@@ -29,8 +29,8 @@ const postSchema = new Schema<IPost>(
     isHide: { type: Boolean, default: false },
     createdById: { type: Schema.Types.ObjectId, required: true },
     updatedById: { type: Schema.Types.ObjectId, required: false },
-    hiddenAt: { type: Date, required: false },
-    shownAt: { type: Date, default: Date.now },
+    rentedAt: { type: Date, required: false },
+    openedForRentAt: { type: Date, default: Date.now },
     imagesId: [{ type: Schema.Types.ObjectId, required: true }],
     deletedAt: { type: Date, required: false }
   },

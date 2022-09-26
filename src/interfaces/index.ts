@@ -97,8 +97,8 @@ export interface IPostResponse extends IBaseResponse {
   isCheap: boolean;
   isFeatured: boolean;
   isRented: boolean;
-  hiddenAt?: Date;
-  shownAt: Date;
+  rentedAt?: Date;
+  openedForRentAt: Date;
 
   category?: ICategoryResponse;
   ward?: IWardResponse;

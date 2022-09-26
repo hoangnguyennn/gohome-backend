@@ -120,7 +120,7 @@ const PostService = {
 
     return Post.findByIdAndUpdate(
       id,
-      { $set: { isRented: true, updatedById } },
+      { $set: { isRented: true, rentedAt: Date.now, updatedById } },
       { new: true }
     )
       .populate('category')
@@ -136,7 +136,16 @@ const PostService = {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
     }
 
-    return Post.findByIdAndUpdate(id, postUpdate, { new: true })
+    const postParams: any = postUpdate;
+    if (post.isRented !== postUpdate.isRented) {
+      if (postUpdate.isRented) {
+        postParams.rentedAt = Date.now;
+      } else {
+        postParams.openedForRentAt = Date.now;
+      }
+    }
+
+    return Post.findByIdAndUpdate(id, { $set: postParams }, { new: true })
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')

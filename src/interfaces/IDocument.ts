@@ -44,8 +44,8 @@ export interface IPost extends BaseDocument {
   isRented: boolean;
   createdById: Types.ObjectId;
   updatedById?: Types.ObjectId;
-  hiddenAt?: Date;
-  shownAt: Date;
+  rentedAt?: Date;
+  openedForRentAt: Date;
   imagesId: Types.ObjectId[];
 
   category?: ICategory;
