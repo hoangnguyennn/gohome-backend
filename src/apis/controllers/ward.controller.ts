@@ -9,10 +9,21 @@ const WardController = {
     const wards = await WardService.getList();
     return success(res, { wards: wards.map(mapWardToResponse) });
   },
+  getById: async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const ward = await WardService.getById(id);
+    return success(res, { ward: mapWardToResponse(ward) });
+  },
   create: async (req: Request, res: Response) => {
     const wardRequest: IWardRequest = req.body;
     const newWard = await WardService.create(wardRequest);
     return success(res, { ward: mapWardToResponse(newWard) });
+  },
+  updateById: async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const wardUpdate: IWardRequest = req.body;
+    const ward = await WardService.updateById(id, wardUpdate);
+    return success(res, { ward: mapWardToResponse(ward) });
   }
 };
 
