@@ -8,7 +8,7 @@ import Category from '~/models/category.model';
 
 const CategoryService = {
   getList: () => {
-    return Category.find();
+    return Category.find().sort('name');
   },
   getById: async (id: string) => {
     const category = await Category.findById(id);

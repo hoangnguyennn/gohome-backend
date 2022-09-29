@@ -4,7 +4,7 @@ import Ward from '~/models/ward.model';
 
 const DistrictService = {
   getList: () => {
-    return District.find();
+    return District.find().sort('type name');
   },
   create: (district: IDistrictRequest) => {
     return District.create(district);

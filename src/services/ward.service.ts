@@ -3,7 +3,7 @@ import Ward from '~/models/ward.model';
 
 const WardService = {
   getList: () => {
-    return Ward.find().populate('district');
+    return Ward.find().populate('district').sort('type name');
   },
   create: async (ward: IWardRequest) => {
     return (await Ward.create(ward)).populate('district');
