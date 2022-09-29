@@ -367,6 +367,8 @@ const init = async () => {
   });
   await wardModel.create(newWards);
   console.log('create wards done');
+
+  process.exit();
 };
 
 init();
