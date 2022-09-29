@@ -12,10 +12,21 @@ const DistrictController = {
     const districts = await DistrictService.getList();
     return success(res, { districts: districts.map(mapDistrictToResponse) });
   },
+  getById: async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const district = await DistrictService.getById(id);
+    return success(res, { district: mapDistrictToResponse(district) });
+  },
   create: async (req: Request, res: Response) => {
     const districtRequest: IDistrictRequest = req.body;
     const newDistrict = await DistrictService.create(districtRequest);
     return success(res, { district: mapDistrictToResponse(newDistrict) });
+  },
+  updateById: async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const districtUpdate: IDistrictRequest = req.body;
+    const district = await DistrictService.updateById(id, districtUpdate);
+    return success(res, { district: mapDistrictToResponse(district) });
   },
   getWards: async (req: Request, res: Response) => {
     const { id } = req.params;
