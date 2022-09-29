@@ -22,8 +22,18 @@ const CategoryService = {
   create: (category: ICategoryRequest) => {
     return Category.create(category);
   },
-  update: () => {
-    console.log('update');
+  updateById: async (id: string, categoryUpdate: ICategoryRequest) => {
+    const category = await Category.findById(id);
+
+    if (!category) {
+      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+    }
+
+    return Category.findByIdAndUpdate(
+      id,
+      { $set: categoryUpdate },
+      { new: true }
+    );
   },
   increaseCount: (id: string) => {
     return Category.findByIdAndUpdate(
