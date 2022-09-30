@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import accountRoute from './account.route';
 import authRoute from './auth.route';
 import categoryRoute from './category.route';
 import districtRoute from './district.route';
@@ -8,6 +9,7 @@ import userRoute from './user.route';
 import wardRoute from './ward.route';
 
 const router = Router();
+router.use('/account', accountRoute);
 router.use('/auth', authRoute);
 router.use('/categories', categoryRoute);
 router.use('/districts', districtRoute);

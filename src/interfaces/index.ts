@@ -124,3 +124,12 @@ export interface IImageCreate {
 export interface IImageResponse extends IBaseResponse {
   url: string;
 }
+
+export interface IUserRequest {
+  fullName?: string;
+  avatar?: string;
+}
+
+export interface IChangePasswordRequest {
+  newPassword: string;
+}
