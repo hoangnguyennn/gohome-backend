@@ -24,7 +24,8 @@ export const mapUserToResponse = (user: IUser) => {
     type: user.type,
     isHide: user.isHide,
     createdAt: user.createdAt,
-    updatedAt: user.updatedAt
+    updatedAt: user.updatedAt,
+    isVerified: user.isVerified
   } as IUserResponse;
 };
 

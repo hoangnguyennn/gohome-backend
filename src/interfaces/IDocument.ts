@@ -19,6 +19,7 @@ export interface IUser extends BaseDocument {
   fullName?: string;
   avatar?: string;
   type: UserTypes;
+  isVerified: boolean;
 }
 
 export interface IPost extends BaseDocument {

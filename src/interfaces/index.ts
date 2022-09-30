@@ -112,7 +112,7 @@ export interface IUserResponse extends IBaseResponse {
   fullName?: string;
   avatar?: string;
   type: UserTypes;
-  createdAt: Date;
+  isVerified: boolean;
 }
 
 export interface IImageCreate {
