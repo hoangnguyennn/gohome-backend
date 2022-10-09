@@ -2,7 +2,7 @@ import { Router } from 'express';
 import catcherWrapper from '~/helpers/catcherWrapper';
 import { checkAuth } from '~/middlewares/auth.middleware';
 import { checkValidObjectId } from '~/middlewares/objectId.middleware';
-import PostController from '../controllers/post.controller';
+import PostController from '~/apis/controllers/post.controller';
 
 const router = Router();
 router

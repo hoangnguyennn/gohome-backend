@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import catcherWrapper from '~/helpers/catcherWrapper';
 import { getNewId } from '~/utils/converter';
-import UploadController from '../controllers/upload.controller';
+import UploadController from '~/apis/controllers/upload.controller';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

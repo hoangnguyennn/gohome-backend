@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import catcherWrapper from '~/helpers/catcherWrapper';
 import { checkValidObjectId } from '~/middlewares/objectId.middleware';
-import DistrictController from '../controllers/district.controller';
+import DistrictController from '~/apis/controllers/district.controller';
 
 const router = Router();
 router

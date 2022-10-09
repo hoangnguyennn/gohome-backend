@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import catcherWrapper from '~/helpers/catcherWrapper';
 import { checkValidObjectId } from '~/middlewares/objectId.middleware';
-import CategoryController from '../controllers/category.controller';
+import CategoryController from '~/apis/controllers/category.controller';
 
 const router = Router();
 router
