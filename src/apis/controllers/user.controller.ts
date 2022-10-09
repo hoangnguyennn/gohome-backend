@@ -7,6 +7,16 @@ const UserController = {
   getList: async (req: Request, res: Response) => {
     const users = await UserService.getList();
     return success(res, { users: users.map(mapUserToResponse) });
+  },
+  getById: async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const user = await UserService.getById(id);
+    return success(res, { user: mapUserToResponse(user) });
+  },
+  verify: async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const user = await UserService.verify(id);
+    return success(res, { user: mapUserToResponse(user) });
   }
 };
 
