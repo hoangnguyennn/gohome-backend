@@ -1,3 +1,4 @@
+import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
   HttpError,
@@ -19,17 +20,26 @@ const UserService = {
     return user;
   },
   verify: async (id: string) => {
-    const user = await User.findByIdAndUpdate(
-      id,
-      { $set: { isVerified: true } },
-      { new: true }
-    );
+    const user = await User.findById(id);
 
     if (!user) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
     }
 
-    return user;
+    if (user.isVerified) {
+      throw new HttpError(
+        ERROR_MESSAGES.USER_VERIFIED_BEFORE,
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const userUpdated = await User.findByIdAndUpdate(
+      id,
+      { $set: { isVerified: true } },
+      { new: true }
+    );
+
+    return userUpdated;
   }
 };
 
