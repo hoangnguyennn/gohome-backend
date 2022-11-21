@@ -9,10 +9,10 @@ import Ward from '~/models/ward.model';
 
 const DistrictService = {
   getList: () => {
-    return District.find().sort('type name');
+    return District.find().sort('type name').exec();
   },
   getById: async (id: string) => {
-    const district = await District.findById(id);
+    const district = await District.findById(id).exec();
 
     if (!district) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -28,7 +28,7 @@ const DistrictService = {
       id,
       { $set: districtUpdate },
       { new: true }
-    );
+    ).exec();
 
     if (!district) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -43,7 +43,7 @@ const DistrictService = {
     console.log('hide');
   },
   getWards: (districtId: string) => {
-    return Ward.find({ districtId: districtId });
+    return Ward.find({ districtId: districtId }).exec();
   }
 };
 

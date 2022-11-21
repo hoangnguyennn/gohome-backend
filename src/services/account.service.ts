@@ -13,7 +13,7 @@ const AccountService = {
       userId,
       { $set: userInfo },
       { new: true }
-    );
+    ).exec();
 
     if (!user) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -32,7 +32,7 @@ const AccountService = {
       userId,
       { $set: { password: hashedPassword } },
       { new: true }
-    );
+    ).exec();
 
     if (!user) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);

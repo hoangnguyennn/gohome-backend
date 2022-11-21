@@ -78,7 +78,7 @@ postSchema.virtual('images', {
 });
 
 postSchema.pre('validate', async function (next) {
-  const category = await Category.findById(this.categoryId);
+  const category = await Category.findById(this.categoryId).exec();
   this.code = getPostCode(category);
   this.slug = getSlug(this.title);
   next();

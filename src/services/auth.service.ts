@@ -5,7 +5,7 @@ import tokenUtil from '~/utils/token.util';
 
 const AuthService = {
   register: async (username: string, password: string) => {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).exec();
 
     if (user) {
       throw new HttpError('User already exists', HTTP_STATUS.BAD_REQUEST);
@@ -18,7 +18,7 @@ const AuthService = {
     return { token };
   },
   login: async (username: string, password: string) => {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).exec();
 
     if (!user) {
       throw new HttpError('User not found', HTTP_STATUS.NOT_FOUND);
@@ -35,7 +35,7 @@ const AuthService = {
     return { token };
   },
   me: async (userId: string) => {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).exec();
 
     if (!user) {
       throw new HttpError('User not found', HTTP_STATUS.NOT_FOUND);

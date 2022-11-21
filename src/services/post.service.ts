@@ -15,7 +15,8 @@ const PostService = {
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
-      .populate('images');
+      .populate('images')
+      .exec();
   },
   getRentedList: () => {
     return Post.find({ isRented: true })
@@ -24,7 +25,8 @@ const PostService = {
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
-      .populate('images');
+      .populate('images')
+      .exec();
   },
   getById: async (id: string) => {
     const post = await Post.findById(id)
@@ -32,7 +34,8 @@ const PostService = {
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
-      .populate('images');
+      .populate('images')
+      .exec();
 
     if (!post) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -50,7 +53,7 @@ const PostService = {
       .populate('images');
   },
   approve: async (id: string, updatedById: string) => {
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).exec();
 
     if (!post) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -81,7 +84,7 @@ const PostService = {
       .populate('images');
   },
   deny: async (id: string, reason: string, updatedById: string) => {
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).exec();
 
     if (!post) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -112,7 +115,7 @@ const PostService = {
       .populate('images');
   },
   markAsRented: async (id: string, updatedById: string) => {
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).exec();
 
     if (!post) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -130,7 +133,7 @@ const PostService = {
       .populate('images');
   },
   updateById: async (id: string, postUpdate: IPostUpdate) => {
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).exec();
 
     if (!post) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -150,7 +153,8 @@ const PostService = {
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
-      .populate('images');
+      .populate('images')
+      .exec();
   }
 };
 

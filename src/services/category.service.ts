@@ -8,10 +8,10 @@ import Category from '~/models/category.model';
 
 const CategoryService = {
   getList: () => {
-    return Category.find().sort('name');
+    return Category.find().sort('name').exec();
   },
   getById: async (id: string) => {
-    const category = await Category.findById(id);
+    const category = await Category.findById(id).exec();
 
     if (!category) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -27,7 +27,7 @@ const CategoryService = {
       id,
       { $set: categoryUpdate },
       { new: true }
-    );
+    ).exec();
 
     if (!category) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);

@@ -6,13 +6,13 @@ import AccountService from '~/services/account.service';
 
 const AccountController = {
   updateInfo: async (req: Request, res: Response) => {
-    const userId = req.user?.userId as string;
+    const userId = req.user?.userId;
     const userInfo: IUserRequest = req.body;
     const user = await AccountService.updateInfo(userId, userInfo);
     return success(res, { user: mapUserToResponse(user) });
   },
   changePassword: async (req: Request, res: Response) => {
-    const userId = req.user?.userId as string;
+    const userId = req.user?.userId;
     const changePasswordRequest: IChangePasswordRequest = req.body;
     const user = await AccountService.changePassword(
       userId,

@@ -8,10 +8,10 @@ import User from '~/models/user.model';
 
 const UserService = {
   getList: () => {
-    return User.find();
+    return User.find().exec();
   },
   getById: async (id: string) => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).exec();
 
     if (!user) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -20,7 +20,7 @@ const UserService = {
     return user;
   },
   verify: async (id: string) => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).exec();
 
     if (!user) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -37,7 +37,7 @@ const UserService = {
       id,
       { $set: { isVerified: true } },
       { new: true }
-    );
+    ).exec();
 
     return userUpdated;
   }

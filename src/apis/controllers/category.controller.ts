@@ -10,7 +10,7 @@ const CategoryController = {
     return success(res, { categories: categories.map(mapCategoryToResponse) });
   },
   getById: async (req: Request, res: Response) => {
-    const id = req.params.id as string;
+    const id = req.params.id;
     const category = await CategoryService.getById(id);
     return success(res, { category: mapCategoryToResponse(category) });
   },
@@ -20,7 +20,7 @@ const CategoryController = {
     return success(res, { category: mapCategoryToResponse(category) });
   },
   updateById: async (req: Request, res: Response) => {
-    const id = req.params.id as string;
+    const id = req.params.id;
     const categoryUpdate: ICategoryRequest = req.body;
     const category = await CategoryService.updateById(id, categoryUpdate);
     return success(res, { category: mapCategoryToResponse(category) });

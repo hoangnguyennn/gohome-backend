@@ -10,7 +10,7 @@ const WardController = {
     return success(res, { wards: wards.map(mapWardToResponse) });
   },
   getById: async (req: Request, res: Response) => {
-    const id = req.params.id as string;
+    const id = req.params.id;
     const ward = await WardService.getById(id);
     return success(res, { ward: mapWardToResponse(ward) });
   },
@@ -20,7 +20,7 @@ const WardController = {
     return success(res, { ward: mapWardToResponse(newWard) });
   },
   updateById: async (req: Request, res: Response) => {
-    const id = req.params.id as string;
+    const id = req.params.id;
     const wardUpdate: IWardRequest = req.body;
     const ward = await WardService.updateById(id, wardUpdate);
     return success(res, { ward: mapWardToResponse(ward) });

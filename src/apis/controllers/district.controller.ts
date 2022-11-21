@@ -13,7 +13,7 @@ const DistrictController = {
     return success(res, { districts: districts.map(mapDistrictToResponse) });
   },
   getById: async (req: Request, res: Response) => {
-    const id = req.params.id as string;
+    const id = req.params.id;
     const district = await DistrictService.getById(id);
     return success(res, { district: mapDistrictToResponse(district) });
   },
@@ -23,7 +23,7 @@ const DistrictController = {
     return success(res, { district: mapDistrictToResponse(newDistrict) });
   },
   updateById: async (req: Request, res: Response) => {
-    const id = req.params.id as string;
+    const id = req.params.id;
     const districtUpdate: IDistrictRequest = req.body;
     const district = await DistrictService.updateById(id, districtUpdate);
     return success(res, { district: mapDistrictToResponse(district) });

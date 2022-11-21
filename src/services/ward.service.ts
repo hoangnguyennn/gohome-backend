@@ -8,12 +8,13 @@ import Ward from '~/models/ward.model';
 
 const WardService = {
   getList: () => {
-    return Ward.find().populate('district').sort('districtId type name');
+    return Ward.find().populate('district').sort('districtId type name').exec();
   },
   getById: async (id: string) => {
     const ward = await Ward.findById(id)
       .populate('district')
-      .sort('districtId type name');
+      .sort('districtId type name')
+      .exec();
 
     if (!ward) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -29,7 +30,7 @@ const WardService = {
       id,
       { $set: wardUpdate },
       { new: true }
-    );
+    ).exec();
 
     if (!ward) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
