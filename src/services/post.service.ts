@@ -1,32 +1,51 @@
+import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import { IPostCreate, IPostUpdate } from '~/interfaces';
+import { IDataListFilter, IPostCreate, IPostUpdate } from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
 import Post from '~/models/post.model';
 
 const PostService = {
-  getList: () => {
-    return Post.find({ isRented: false })
+  getList: async (dataListFilter: IDataListFilter) => {
+    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
+    const offset = dataListFilter.offset || 0;
+
+    const posts = await Post.find({ isRented: false })
       .sort({ verifyStatus: 1, createdAt: 1 })
+      .limit(limit)
+      .skip(offset)
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
       .exec();
+
+    const total = await Post.find({ isRented: false }).lean().count().exec();
+
+    return { data: posts, total };
   },
-  getRentedList: () => {
-    return Post.find({ isRented: true })
+  getRentedList: async (dataListFilter: IDataListFilter) => {
+    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
+    const offset = dataListFilter.offset || 0;
+
+    const posts = await Post.find({ isRented: true })
       .sort({ verifyStatus: 1, createdAt: 1 })
+      .limit(limit)
+      .skip(offset)
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
       .exec();
+
+    const total = await Post.find({ isRented: true }).lean().count().exec();
+
+    return { data: posts, total };
   },
   getById: async (id: string) => {
     const post = await Post.findById(id)

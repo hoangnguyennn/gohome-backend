@@ -133,3 +133,13 @@ export interface IUserRequest {
 export interface IChangePasswordRequest {
   newPassword: string;
 }
+
+export interface IDataListFilter {
+  limit?: number;
+  offset?: number;
+}
+
+export interface IDataListResponse<T> {
+  data: T[];
+  total: number;
+}

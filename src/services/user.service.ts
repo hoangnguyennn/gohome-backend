@@ -1,14 +1,22 @@
+import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
+import { IDataListFilter } from '~/interfaces';
 import User from '~/models/user.model';
 
 const UserService = {
-  getList: () => {
-    return User.find().exec();
+  getList: async (dataListFilter: IDataListFilter) => {
+    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
+    const offset = dataListFilter.offset || 0;
+
+    const users = await User.find().limit(limit).skip(offset).exec();
+    const total = await User.find().lean().count().exec();
+
+    return { data: users, total };
   },
   getById: async (id: string) => {
     const user = await User.findById(id).exec();

@@ -12,7 +12,7 @@ const UploadController = {
 
     const image: IImageCreate = { url: url, originalUrl: url, publicId };
     const newImage = await ImageService.create(image);
-    return success(res, { image: mapImageToResponse(newImage) });
+    return success(res, { data: mapImageToResponse(newImage) });
   }
 };
 

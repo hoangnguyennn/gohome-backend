@@ -17,7 +17,7 @@ const AuthController = {
   me: async (req: Request, res: Response) => {
     const tokenPayload = req.user;
     const user = await AuthService.me(tokenPayload.userId);
-    return success(res, { user: mapUserToResponse(user) });
+    return success(res, { data: mapUserToResponse(user) });
   }
 };
 

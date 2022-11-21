@@ -1,14 +1,26 @@
+import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import { ICategoryRequest } from '~/interfaces';
+import { ICategoryRequest, IDataListFilter } from '~/interfaces';
 import Category from '~/models/category.model';
 
 const CategoryService = {
-  getList: () => {
-    return Category.find().sort('name').exec();
+  getList: async (dataListFilter: IDataListFilter) => {
+    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
+    const offset = dataListFilter.offset || 0;
+
+    const categories = await Category.find()
+      .limit(limit)
+      .skip(offset)
+      .sort('name')
+      .exec();
+
+    const total = await Category.find().lean().count().exec();
+
+    return { data: categories, total };
   },
   getById: async (id: string) => {
     const category = await Category.findById(id).exec();

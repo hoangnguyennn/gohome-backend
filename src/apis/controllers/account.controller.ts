@@ -9,7 +9,7 @@ const AccountController = {
     const userId = req.user?.userId;
     const userInfo: IUserRequest = req.body;
     const user = await AccountService.updateInfo(userId, userInfo);
-    return success(res, { user: mapUserToResponse(user) });
+    return success(res, { data: mapUserToResponse(user) });
   },
   changePassword: async (req: Request, res: Response) => {
     const userId = req.user?.userId;
@@ -18,7 +18,7 @@ const AccountController = {
       userId,
       changePasswordRequest
     );
-    return success(res, { user: mapUserToResponse(user) });
+    return success(res, { data: mapUserToResponse(user) });
   }
 };
 

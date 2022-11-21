@@ -1,14 +1,27 @@
+import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import { IWardRequest } from '~/interfaces';
+import { IDataListFilter, IWardRequest } from '~/interfaces';
 import Ward from '~/models/ward.model';
 
 const WardService = {
-  getList: () => {
-    return Ward.find().populate('district').sort('districtId type name').exec();
+  getList: async (dataListFilter: IDataListFilter) => {
+    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
+    const offset = dataListFilter.offset || 0;
+
+    const wards = await Ward.find()
+      .populate('district')
+      .sort('districtId type name')
+      .limit(limit)
+      .skip(offset)
+      .exec();
+
+    const total = await Ward.find().count().lean().exec();
+
+    return { data: wards, total };
   },
   getById: async (id: string) => {
     const ward = await Ward.findById(id)
