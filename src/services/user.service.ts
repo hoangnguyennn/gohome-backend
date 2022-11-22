@@ -1,4 +1,3 @@
-import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
@@ -6,14 +5,39 @@ import {
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { IDataListFilter } from '~/interfaces';
+import { IUser } from '~/interfaces/IDocument';
 import User from '~/models/user.model';
+import {
+  getLimit,
+  getOffset,
+  getSortBy,
+  getSortDirection
+} from '~/utils/getter.util';
 
 const UserService = {
-  getList: async (dataListFilter: IDataListFilter) => {
-    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
-    const offset = dataListFilter.offset || 0;
+  getList: async (dataListFilter: IDataListFilter<IUser>) => {
+    const limit = getLimit(dataListFilter.limit);
+    const offset = getOffset(dataListFilter.offset);
+    const sortBy = getSortBy(dataListFilter.sortBy);
+    const sortDirection = getSortDirection(dataListFilter.sortDirection);
 
-    const users = await User.find().limit(limit).skip(offset).exec();
+    let query = User.find();
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    if (offset) {
+      query = query.skip(offset);
+    }
+
+    if (sortBy && sortDirection) {
+      query = query
+        .collation({ locale: 'en' })
+        .sort({ [sortBy]: sortDirection });
+    }
+
+    const users = await query.exec();
     const total = await User.find().lean().count().exec();
 
     return { data: users, total };

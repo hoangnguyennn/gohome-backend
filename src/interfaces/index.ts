@@ -5,15 +5,6 @@ import {
   WardTypes
 } from './enums';
 
-export interface ITokenPayload {
-  userId: string;
-}
-
-export interface ICategoryRequest {
-  name: string;
-  code: string;
-}
-
 export interface IBaseResponse {
   id: string;
   isHide: boolean;
@@ -21,9 +12,30 @@ export interface IBaseResponse {
   updatedAt: Date;
 }
 
+export interface ICategoryRequest {
+  name: string;
+  code: string;
+}
+
 export interface ICategoryResponse extends IBaseResponse {
   name: string;
   code: string;
+}
+
+export interface IChangePasswordRequest {
+  newPassword: string;
+}
+
+export interface IDataListFilter<T = any> {
+  limit?: number;
+  offset?: number;
+  sortBy?: keyof T;
+  sortDirection?: DataListSortDirection;
+}
+
+export interface IDataListResponse<T> {
+  data: T[];
+  total: number;
 }
 
 export interface IDistrictRequest {
@@ -36,16 +48,14 @@ export interface IDistrictResponse extends IBaseResponse {
   type: DistrictTypes;
 }
 
-export interface IWardRequest {
-  name: string;
-  type: WardTypes;
-  districtId: string;
+export interface IImageCreate {
+  url: string;
+  originalUrl: string;
+  publicId: string;
 }
 
-export interface IWardResponse extends IBaseResponse {
-  name: string;
-  type: WardTypes;
-  district?: IDistrictResponse;
+export interface IImageResponse extends IBaseResponse {
+  url: string;
 }
 
 export interface IPostRequest {
@@ -107,6 +117,15 @@ export interface IPostResponse extends IBaseResponse {
   images?: IImageResponse[];
 }
 
+export interface ITokenPayload {
+  userId: string;
+}
+
+export interface IUserRequest {
+  fullName?: string;
+  avatar?: string;
+}
+
 export interface IUserResponse extends IBaseResponse {
   username: string;
   fullName?: string;
@@ -115,31 +134,18 @@ export interface IUserResponse extends IBaseResponse {
   isVerified: boolean;
 }
 
-export interface IImageCreate {
-  url: string;
-  originalUrl: string;
-  publicId: string;
+export interface IWardRequest {
+  name: string;
+  type: WardTypes;
+  districtId: string;
 }
 
-export interface IImageResponse extends IBaseResponse {
-  url: string;
+export interface IWardResponse extends IBaseResponse {
+  name: string;
+  type: WardTypes;
+  district?: IDistrictResponse;
 }
 
-export interface IUserRequest {
-  fullName?: string;
-  avatar?: string;
-}
+export type DataListSortDirection = 'descend' | 'ascend';
 
-export interface IChangePasswordRequest {
-  newPassword: string;
-}
-
-export interface IDataListFilter {
-  limit?: number;
-  offset?: number;
-}
-
-export interface IDataListResponse<T> {
-  data: T[];
-  total: number;
-}
+export type Nullable<T> = T | null;
