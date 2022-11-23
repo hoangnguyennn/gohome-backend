@@ -4,7 +4,7 @@ import {
   UserTypes,
   WardTypes
 } from './enums';
-import { IUser } from './IDocument';
+import { IUser, IWard } from './IDocument';
 
 export interface IBaseResponse {
   id: string;
@@ -32,13 +32,6 @@ export interface IDataListFilter<T = any> {
   offset?: number;
   sortBy?: keyof T;
   sortDirection?: DataListSortDirection;
-}
-
-export interface IUserFilter extends IDataListFilter<IUser> {
-  username?: string;
-  fullName?: string;
-  type?: string;
-  isVerified?: string;
 }
 
 export interface IDataListResponse<T> {
@@ -129,6 +122,13 @@ export interface ITokenPayload {
   userId: string;
 }
 
+export interface IUserFilter extends IDataListFilter<IUser> {
+  username?: string;
+  fullName?: string;
+  type?: string;
+  isVerified?: string;
+}
+
 export interface IUserRequest {
   fullName?: string;
   avatar?: string;
@@ -140,6 +140,12 @@ export interface IUserResponse extends IBaseResponse {
   avatar?: string;
   type: UserTypes;
   isVerified: boolean;
+}
+
+export interface IWardFilter extends IDataListFilter<IWard> {
+  name?: string;
+  type?: string;
+  districtId?: string;
 }
 
 export interface IWardRequest {

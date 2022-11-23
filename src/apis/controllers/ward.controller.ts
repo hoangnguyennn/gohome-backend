@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { success } from '~/helpers/commonResponse';
 import { mapWardToResponse } from '~/helpers/mapDataToResponse';
-import { IDataListFilter, IWardRequest } from '~/interfaces';
+import { IWardFilter, IWardRequest } from '~/interfaces';
 import WardService from '~/services/ward.service';
 
 const WardController = {
   getList: async (req: Request, res: Response) => {
-    const dataListFilter: IDataListFilter = req.query;
+    const dataListFilter: IWardFilter = req.query;
     const { total, data } = await WardService.getList(dataListFilter);
     return success(res, { total, data: data.map(mapWardToResponse) });
   },
