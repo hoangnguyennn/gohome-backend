@@ -4,12 +4,12 @@ import {
   mapDistrictToResponse,
   mapWardToResponse
 } from '~/helpers/mapDataToResponse';
-import { IDataListFilter, IDistrictRequest } from '~/interfaces';
+import { IDistrictFilter, IDistrictRequest } from '~/interfaces';
 import DistrictService from '~/services/district.service';
 
 const DistrictController = {
   getList: async (req: Request, res: Response) => {
-    const dataListFilter: IDataListFilter = req.query;
+    const dataListFilter: IDistrictFilter = req.query;
     const { total, data } = await DistrictService.getList(dataListFilter);
     return success(res, { total, data: data.map(mapDistrictToResponse) });
   },

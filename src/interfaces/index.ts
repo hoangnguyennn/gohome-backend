@@ -4,7 +4,7 @@ import {
   UserTypes,
   WardTypes
 } from './enums';
-import { IUser, IWard } from './IDocument';
+import { IDistrict, IUser, IWard } from './IDocument';
 
 export interface IBaseResponse {
   id: string;
@@ -37,6 +37,11 @@ export interface IDataListFilter<T = any> {
 export interface IDataListResponse<T> {
   data: T[];
   total: number;
+}
+
+export interface IDistrictFilter extends IDataListFilter<IDistrict> {
+  name?: string;
+  type?: string;
 }
 
 export interface IDistrictRequest {

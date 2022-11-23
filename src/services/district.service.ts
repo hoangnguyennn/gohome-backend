@@ -3,25 +3,38 @@ import {
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import { IDataListFilter, IDistrictRequest } from '~/interfaces';
-import { IDistrict } from '~/interfaces/IDocument';
+import { IDistrictFilter, IDistrictRequest } from '~/interfaces';
 import District from '~/models/district.model';
 import Ward from '~/models/ward.model';
 import {
   getLimit,
   getOffset,
   getSortBy,
-  getSortDirection
+  getSortDirection,
+  getValue
 } from '~/utils/getter.util';
 
 const DistrictService = {
-  getList: async (dataListFilter: IDataListFilter<IDistrict>) => {
+  getList: async (dataListFilter: IDistrictFilter) => {
     const limit = getLimit(dataListFilter.limit);
     const offset = getOffset(dataListFilter.offset);
     const sortBy = getSortBy(dataListFilter.sortBy);
     const sortDirection = getSortDirection(dataListFilter.sortDirection);
+    const name = getValue(dataListFilter.name);
+    const type = getValue(dataListFilter.type);
 
     let query = District.find().collation({ locale: 'en' }).sort('type name');
+    let queryCount = District.find();
+
+    if (name) {
+      query = query.find({ name: new RegExp(name, 'i') });
+      queryCount = queryCount.find({ name: new RegExp(name, 'i') });
+    }
+
+    if (type) {
+      query = query.find({ type });
+      queryCount = queryCount.find({ type });
+    }
 
     if (sortBy && sortDirection) {
       query = query
@@ -38,7 +51,7 @@ const DistrictService = {
     }
 
     const districts = await query.exec();
-    const total = await District.find().lean().count().exec();
+    const total = await queryCount.lean().count().exec();
 
     return { data: districts, total };
   },
