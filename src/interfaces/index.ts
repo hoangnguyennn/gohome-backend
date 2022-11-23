@@ -69,6 +69,11 @@ export interface IImageResponse extends IBaseResponse {
   url: string;
 }
 
+export interface IPostFilter extends IDataListFilter<IDistrict> {
+  title?: string;
+  createdById?: string;
+}
+
 export interface IPostRequest {
   title: string;
   categoryId: string;

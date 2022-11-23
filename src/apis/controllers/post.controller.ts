@@ -4,6 +4,7 @@ import { mapPostToResponse } from '~/helpers/mapDataToResponse';
 import {
   IDataListFilter,
   IPostCreate,
+  IPostFilter,
   IPostRequest,
   IPostUpdate
 } from '~/interfaces';
@@ -12,7 +13,7 @@ import PostService from '~/services/post.service';
 
 const PostController = {
   getList: async (req: Request, res: Response) => {
-    const dataListFilter: IDataListFilter = req.query;
+    const dataListFilter: IPostFilter = req.query;
     const { total, data } = await PostService.getList(dataListFilter);
     return success(res, { total, data: data.map(mapPostToResponse) });
   },

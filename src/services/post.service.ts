@@ -3,7 +3,12 @@ import {
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import { IDataListFilter, IPostCreate, IPostUpdate } from '~/interfaces';
+import {
+  IDataListFilter,
+  IPostCreate,
+  IPostFilter,
+  IPostUpdate
+} from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
 import { IPost } from '~/interfaces/IDocument';
 import Post from '~/models/post.model';
@@ -11,19 +16,33 @@ import {
   getLimit,
   getOffset,
   getSortBy,
-  getSortDirection
+  getSortDirection,
+  getValue
 } from '~/utils/getter.util';
 
 const PostService = {
-  getList: async (dataListFilter: IDataListFilter<IPost>) => {
+  getList: async (dataListFilter: IPostFilter) => {
     const limit = getLimit(dataListFilter.limit);
     const offset = getOffset(dataListFilter.offset);
     const sortBy = getSortBy(dataListFilter.sortBy);
     const sortDirection = getSortDirection(dataListFilter.sortDirection);
+    const title = getValue(dataListFilter.title);
+    const createdById = getValue(dataListFilter.createdById);
 
-    let query = Post.find()
+    let query = Post.find({ isRented: false })
       .collation({ locale: 'en' })
       .sort({ verifyStatus: 1, createdAt: 1 });
+    let queryCount = Post.find({ isRented: false });
+
+    if (title) {
+      query = query.find({ title: new RegExp(title, 'i') });
+      queryCount = queryCount.find({ title: new RegExp(title, 'i') });
+    }
+
+    if (createdById) {
+      query = query.find({ createdById });
+      queryCount = queryCount.find({ createdById });
+    }
 
     if (sortBy && sortDirection) {
       query = query
@@ -40,7 +59,6 @@ const PostService = {
     }
 
     const posts = await query
-      .find({ isRented: false })
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
@@ -48,7 +66,7 @@ const PostService = {
       .populate('images')
       .exec();
 
-    const total = await Post.find({ isRented: false }).lean().count().exec();
+    const total = await queryCount.lean().count().exec();
 
     return { data: posts, total };
   },

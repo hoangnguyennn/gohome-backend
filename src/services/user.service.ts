@@ -32,7 +32,7 @@ const UserService = {
         ? dataListFilter.isVerified === '1'
         : undefined;
 
-    let query = User.find();
+    let query = User.find().sort('type fullName username');
     let queryCount = User.find();
 
     if (username) {

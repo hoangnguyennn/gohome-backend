@@ -1,4 +1,5 @@
 import { Application, json, urlencoded } from 'express';
+import morgan from 'morgan';
 import cors from 'cors';
 import apiRoutes from '~/apis/routes';
 import env from '~/configs/env';
@@ -8,6 +9,7 @@ import notFound from '~/helpers/notFound';
 export default async ({ app }: { app: Application }) => {
   // load middlewares
   app.use(cors());
+  app.use(morgan('tiny'));
   app.use(json());
   app.use(urlencoded({ extended: true }));
 
