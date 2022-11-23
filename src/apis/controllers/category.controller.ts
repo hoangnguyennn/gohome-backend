@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { success } from '~/helpers/commonResponse';
 import { mapCategoryToResponse } from '~/helpers/mapDataToResponse';
-import { ICategoryRequest, IDataListFilter } from '~/interfaces';
+import { ICategoryFilter, ICategoryRequest } from '~/interfaces';
 import CategoryService from '~/services/category.service';
 
 const CategoryController = {
   getList: async (req: Request, res: Response) => {
-    const dataListFilter: IDataListFilter = req.query;
+    const dataListFilter: ICategoryFilter = req.query;
     const { total, data } = await CategoryService.getList(dataListFilter);
     return success(res, { total, data: data.map(mapCategoryToResponse) });
   },

@@ -3,24 +3,37 @@ import {
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import { ICategoryRequest, IDataListFilter } from '~/interfaces';
-import { ICategory } from '~/interfaces/IDocument';
+import { ICategoryFilter, ICategoryRequest } from '~/interfaces';
 import Category from '~/models/category.model';
 import {
   getLimit,
   getOffset,
   getSortBy,
-  getSortDirection
+  getSortDirection,
+  getValue
 } from '~/utils/getter.util';
 
 const CategoryService = {
-  getList: async (dataListFilter: IDataListFilter<ICategory>) => {
+  getList: async (dataListFilter: ICategoryFilter) => {
     const limit = getLimit(dataListFilter.limit);
     const offset = getOffset(dataListFilter.offset);
     const sortBy = getSortBy(dataListFilter.sortBy);
     const sortDirection = getSortDirection(dataListFilter.sortDirection);
+    const name = getValue(dataListFilter.name);
+    const code = getValue(dataListFilter.code);
 
     let query = Category.find().collation({ locale: 'en' }).sort('name');
+    let queryCount = Category.find();
+
+    if (name) {
+      query = query.find({ name: new RegExp(name, 'i') });
+      queryCount = queryCount.find({ name: new RegExp(name, 'i') });
+    }
+
+    if (code) {
+      query = query.find({ code: new RegExp(code, 'i') });
+      queryCount = queryCount.find({ code: new RegExp(code, 'i') });
+    }
 
     if (sortBy && sortDirection) {
       query = query
@@ -37,7 +50,7 @@ const CategoryService = {
     }
 
     const categories = await query.exec();
-    const total = await Category.find().lean().count().exec();
+    const total = await queryCount.lean().count().exec();
 
     return { data: categories, total };
   },

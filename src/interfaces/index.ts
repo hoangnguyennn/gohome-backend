@@ -13,6 +13,11 @@ export interface IBaseResponse {
   updatedAt: Date;
 }
 
+export interface ICategoryFilter extends IDataListFilter<IDistrict> {
+  name?: string;
+  code?: string;
+}
+
 export interface ICategoryRequest {
   name: string;
   code: string;
