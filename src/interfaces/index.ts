@@ -4,6 +4,7 @@ import {
   UserTypes,
   WardTypes
 } from './enums';
+import { IUser } from './IDocument';
 
 export interface IBaseResponse {
   id: string;
@@ -31,6 +32,13 @@ export interface IDataListFilter<T = any> {
   offset?: number;
   sortBy?: keyof T;
   sortDirection?: DataListSortDirection;
+}
+
+export interface IUserFilter extends IDataListFilter<IUser> {
+  username?: string;
+  fullName?: string;
+  type?: string;
+  isVerified?: string;
 }
 
 export interface IDataListResponse<T> {

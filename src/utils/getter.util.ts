@@ -26,6 +26,6 @@ export const getSortBy = (sortBy: string): Nullable<string> => {
   return getValue(sortBy, DATA_LIST_SORT_BY_DEFAULT);
 };
 
-const getValue = <T>(value: T, defaultValue: T) => {
-  return value || defaultValue;
+export const getValue = <T>(value: T, defaultValue?: T) => {
+  return value ?? defaultValue;
 };

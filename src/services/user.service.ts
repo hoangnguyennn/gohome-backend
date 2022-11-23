@@ -4,24 +4,56 @@ import {
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import { IDataListFilter } from '~/interfaces';
-import { IUser } from '~/interfaces/IDocument';
+import { IUserFilter } from '~/interfaces';
+import { UserTypes } from '~/interfaces/enums';
 import User from '~/models/user.model';
 import {
   getLimit,
   getOffset,
   getSortBy,
-  getSortDirection
+  getSortDirection,
+  getValue
 } from '~/utils/getter.util';
 
 const UserService = {
-  getList: async (dataListFilter: IDataListFilter<IUser>) => {
+  getList: async (dataListFilter: IUserFilter) => {
     const limit = getLimit(dataListFilter.limit);
     const offset = getOffset(dataListFilter.offset);
     const sortBy = getSortBy(dataListFilter.sortBy);
     const sortDirection = getSortDirection(dataListFilter.sortDirection);
+    const username = getValue(dataListFilter.username);
+    const fullName = getValue(dataListFilter.fullName);
+    const type =
+      dataListFilter.type in UserTypes
+        ? Number(dataListFilter.type)
+        : undefined;
+    const isVerified =
+      dataListFilter.isVerified !== undefined
+        ? dataListFilter.isVerified === '1'
+        : undefined;
 
     let query = User.find();
+    let queryCount = User.find();
+
+    if (username) {
+      query = query.find({ username: new RegExp(username, 'i') });
+      queryCount = queryCount.find({ username: new RegExp(username, 'i') });
+    }
+
+    if (fullName) {
+      query = query.find({ fullName: new RegExp(fullName, 'i') });
+      queryCount = queryCount.find({ fullName: new RegExp(fullName, 'i') });
+    }
+
+    if (type !== undefined) {
+      query = query.find({ type });
+      queryCount = queryCount.find({ type });
+    }
+
+    if (isVerified !== undefined) {
+      query = query.find({ isVerified });
+      queryCount = queryCount.find({ isVerified });
+    }
 
     if (sortBy && sortDirection) {
       query = query
@@ -38,7 +70,7 @@ const UserService = {
     }
 
     const users = await query.exec();
-    const total = await User.find().lean().count().exec();
+    const total = await queryCount.lean().count().exec();
 
     return { data: users, total };
   },
