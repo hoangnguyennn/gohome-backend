@@ -23,18 +23,18 @@ const UserService = {
 
     let query = User.find();
 
+    if (sortBy && sortDirection) {
+      query = query
+        .collation({ locale: 'en' })
+        .sort({ [sortBy]: sortDirection });
+    }
+
     if (limit) {
       query = query.limit(limit);
     }
 
     if (offset) {
       query = query.skip(offset);
-    }
-
-    if (sortBy && sortDirection) {
-      query = query
-        .collation({ locale: 'en' })
-        .sort({ [sortBy]: sortDirection });
     }
 
     const users = await query.exec();

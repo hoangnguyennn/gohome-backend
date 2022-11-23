@@ -1,23 +1,42 @@
-import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { ICategoryRequest, IDataListFilter } from '~/interfaces';
+import { ICategory } from '~/interfaces/IDocument';
 import Category from '~/models/category.model';
+import {
+  getLimit,
+  getOffset,
+  getSortBy,
+  getSortDirection
+} from '~/utils/getter.util';
 
 const CategoryService = {
-  getList: async (dataListFilter: IDataListFilter) => {
-    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
-    const offset = dataListFilter.offset || 0;
+  getList: async (dataListFilter: IDataListFilter<ICategory>) => {
+    const limit = getLimit(dataListFilter.limit);
+    const offset = getOffset(dataListFilter.offset);
+    const sortBy = getSortBy(dataListFilter.sortBy);
+    const sortDirection = getSortDirection(dataListFilter.sortDirection);
 
-    const categories = await Category.find()
-      .limit(limit)
-      .skip(offset)
-      .sort('name')
-      .exec();
+    let query = Category.find().collation({ locale: 'en' }).sort('name');
 
+    if (sortBy && sortDirection) {
+      query = query
+        .collation({ locale: 'en' })
+        .sort({ [sortBy]: sortDirection });
+    }
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    if (offset) {
+      query = query.skip(offset);
+    }
+
+    const categories = await query.exec();
     const total = await Category.find().lean().count().exec();
 
     return { data: categories, total };

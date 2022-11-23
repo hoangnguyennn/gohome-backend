@@ -1,24 +1,43 @@
-import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { IDataListFilter, IDistrictRequest } from '~/interfaces';
+import { IDistrict } from '~/interfaces/IDocument';
 import District from '~/models/district.model';
 import Ward from '~/models/ward.model';
+import {
+  getLimit,
+  getOffset,
+  getSortBy,
+  getSortDirection
+} from '~/utils/getter.util';
 
 const DistrictService = {
-  getList: async (dataListFilter: IDataListFilter) => {
-    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
-    const offset = dataListFilter.offset || 0;
+  getList: async (dataListFilter: IDataListFilter<IDistrict>) => {
+    const limit = getLimit(dataListFilter.limit);
+    const offset = getOffset(dataListFilter.offset);
+    const sortBy = getSortBy(dataListFilter.sortBy);
+    const sortDirection = getSortDirection(dataListFilter.sortDirection);
 
-    const districts = await District.find()
-      .sort('type name')
-      .limit(limit)
-      .skip(offset)
-      .exec();
+    let query = District.find().collation({ locale: 'en' }).sort('type name');
 
+    if (sortBy && sortDirection) {
+      query = query
+        .collation({ locale: 'en' })
+        .sort({ [sortBy]: sortDirection });
+    }
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    if (offset) {
+      query = query.skip(offset);
+    }
+
+    const districts = await query.exec();
     const total = await District.find().lean().count().exec();
 
     return { data: districts, total };

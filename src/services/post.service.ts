@@ -1,4 +1,3 @@
-import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import {
   COMMON_MESSAGE,
   HttpError,
@@ -6,17 +5,42 @@ import {
 } from '~/helpers/commonResponse';
 import { IDataListFilter, IPostCreate, IPostUpdate } from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
+import { IPost } from '~/interfaces/IDocument';
 import Post from '~/models/post.model';
+import {
+  getLimit,
+  getOffset,
+  getSortBy,
+  getSortDirection
+} from '~/utils/getter.util';
 
 const PostService = {
-  getList: async (dataListFilter: IDataListFilter) => {
-    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
-    const offset = dataListFilter.offset || 0;
+  getList: async (dataListFilter: IDataListFilter<IPost>) => {
+    const limit = getLimit(dataListFilter.limit);
+    const offset = getOffset(dataListFilter.offset);
+    const sortBy = getSortBy(dataListFilter.sortBy);
+    const sortDirection = getSortDirection(dataListFilter.sortDirection);
 
-    const posts = await Post.find({ isRented: false })
-      .sort({ verifyStatus: 1, createdAt: 1 })
-      .limit(limit)
-      .skip(offset)
+    let query = Post.find()
+      .collation({ locale: 'en' })
+      .sort({ verifyStatus: 1, createdAt: 1 });
+
+    if (sortBy && sortDirection) {
+      query = query
+        .collation({ locale: 'en' })
+        .sort({ [sortBy]: sortDirection });
+    }
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    if (offset) {
+      query = query.skip(offset);
+    }
+
+    const posts = await query
+      .find({ isRented: false })
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
@@ -28,14 +52,32 @@ const PostService = {
 
     return { data: posts, total };
   },
-  getRentedList: async (dataListFilter: IDataListFilter) => {
-    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
-    const offset = dataListFilter.offset || 0;
+  getRentedList: async (dataListFilter: IDataListFilter<IPost>) => {
+    const limit = getLimit(dataListFilter.limit);
+    const offset = getOffset(dataListFilter.offset);
+    const sortBy = getSortBy(dataListFilter.sortBy);
+    const sortDirection = getSortDirection(dataListFilter.sortDirection);
 
-    const posts = await Post.find({ isRented: true })
-      .sort({ verifyStatus: 1, createdAt: 1 })
-      .limit(limit)
-      .skip(offset)
+    let query = Post.find()
+      .collation({ locale: 'en' })
+      .sort({ verifyStatus: 1, createdAt: 1 });
+
+    if (sortBy && sortDirection) {
+      query = query
+        .collation({ locale: 'en' })
+        .sort({ [sortBy]: sortDirection });
+    }
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    if (offset) {
+      query = query.skip(offset);
+    }
+
+    const posts = await query
+      .find({ isRented: true })
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')

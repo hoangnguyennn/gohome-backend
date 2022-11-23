@@ -1,24 +1,45 @@
-import { DATA_LIST_LIMIT_DEFAULT } from '~/constants';
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { IDataListFilter, IWardRequest } from '~/interfaces';
+import { IWard } from '~/interfaces/IDocument';
 import Ward from '~/models/ward.model';
+import {
+  getLimit,
+  getOffset,
+  getSortBy,
+  getSortDirection
+} from '~/utils/getter.util';
 
 const WardService = {
-  getList: async (dataListFilter: IDataListFilter) => {
-    const limit = dataListFilter.limit || DATA_LIST_LIMIT_DEFAULT;
-    const offset = dataListFilter.offset || 0;
+  getList: async (dataListFilter: IDataListFilter<IWard>) => {
+    const limit = getLimit(dataListFilter.limit);
+    const offset = getOffset(dataListFilter.offset);
+    const sortBy = getSortBy(dataListFilter.sortBy);
+    const sortDirection = getSortDirection(dataListFilter.sortDirection);
 
-    const wards = await Ward.find()
+    let query = Ward.find()
       .populate('district')
-      .sort('districtId type name')
-      .limit(limit)
-      .skip(offset)
-      .exec();
+      .collation({ locale: 'en' })
+      .sort('districtId type name');
 
+    if (sortBy && sortDirection) {
+      query = query
+        .collation({ locale: 'en' })
+        .sort({ [sortBy]: sortDirection });
+    }
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    if (offset) {
+      query = query.skip(offset);
+    }
+
+    const wards = await query.exec();
     const total = await Ward.find().count().lean().exec();
 
     return { data: wards, total };
@@ -26,6 +47,7 @@ const WardService = {
   getById: async (id: string) => {
     const ward = await Ward.findById(id)
       .populate('district')
+      .collation({ locale: 'en' })
       .sort('districtId type name')
       .exec();
 
@@ -43,7 +65,11 @@ const WardService = {
       id,
       { $set: wardUpdate },
       { new: true }
-    ).exec();
+    )
+      .populate('district')
+      .collation({ locale: 'en' })
+      .sort('districtId type name')
+      .exec();
 
     if (!ward) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
