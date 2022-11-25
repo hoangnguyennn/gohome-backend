@@ -49,8 +49,10 @@ const CategoryService = {
       query = query.skip(offset);
     }
 
-    const categories = await query.exec();
-    const total = await queryCount.lean().count().exec();
+    const [categories, total] = await Promise.all([
+      query.exec(),
+      queryCount.lean().count().exec()
+    ]);
 
     return { data: categories, total };
   },

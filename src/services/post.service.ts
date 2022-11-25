@@ -58,15 +58,16 @@ const PostService = {
       query = query.skip(offset);
     }
 
-    const posts = await query
-      .populate('category')
-      .populate({ path: 'ward', populate: 'district' })
-      .populate('createdBy')
-      .populate('updatedBy')
-      .populate('images')
-      .exec();
-
-    const total = await queryCount.lean().count().exec();
+    const [posts, total] = await Promise.all([
+      query
+        .populate('category')
+        .populate({ path: 'ward', populate: 'district' })
+        .populate('createdBy')
+        .populate('updatedBy')
+        .populate('images')
+        .exec(),
+      queryCount.lean().count().exec()
+    ]);
 
     return { data: posts, total };
   },
@@ -94,16 +95,17 @@ const PostService = {
       query = query.skip(offset);
     }
 
-    const posts = await query
-      .find({ isRented: true })
-      .populate('category')
-      .populate({ path: 'ward', populate: 'district' })
-      .populate('createdBy')
-      .populate('updatedBy')
-      .populate('images')
-      .exec();
-
-    const total = await Post.find({ isRented: true }).lean().count().exec();
+    const [posts, total] = await Promise.all([
+      query
+        .find({ isRented: true })
+        .populate('category')
+        .populate({ path: 'ward', populate: 'district' })
+        .populate('createdBy')
+        .populate('updatedBy')
+        .populate('images')
+        .exec(),
+      Post.find({ isRented: true }).lean().count().exec()
+    ]);
 
     return { data: posts, total };
   },

@@ -69,8 +69,10 @@ const UserService = {
       query = query.skip(offset);
     }
 
-    const users = await query.exec();
-    const total = await queryCount.lean().count().exec();
+    const [users, total] = await Promise.all([
+      query.exec(),
+      queryCount.lean().count().exec()
+    ]);
 
     return { data: users, total };
   },

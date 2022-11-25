@@ -58,8 +58,10 @@ const WardService = {
       query = query.skip(offset);
     }
 
-    const wards = await query.exec();
-    const total = await queryCount.count().lean().exec();
+    const [wards, total] = await Promise.all([
+      query.exec(),
+      queryCount.count().lean().exec()
+    ]);
 
     return { data: wards, total };
   },

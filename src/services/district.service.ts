@@ -50,8 +50,10 @@ const DistrictService = {
       query = query.skip(offset);
     }
 
-    const districts = await query.exec();
-    const total = await queryCount.lean().count().exec();
+    const [districts, total] = await Promise.all([
+      query.exec(),
+      queryCount.lean().count().exec()
+    ]);
 
     return { data: districts, total };
   },
