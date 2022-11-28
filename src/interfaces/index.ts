@@ -70,8 +70,17 @@ export interface IImageResponse extends IBaseResponse {
 }
 
 export interface IPostFilter extends IDataListFilter<IDistrict> {
+  code?: string;
   title?: string;
   createdById?: string;
+  verifyStatus?: string;
+  createdAtStart?: string;
+  createdAtEnd?: string;
+  updatedAtStart?: string;
+  updatedAtEnd?: string;
+  categoryIds?: string | string[];
+  locationIds?: string | string[];
+  ownerPhone?: string;
 }
 
 export interface IPostRequest {

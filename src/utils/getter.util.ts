@@ -6,6 +6,14 @@ import {
 } from '~/constants';
 import { DataListSortDirection, Nullable } from '~/interfaces';
 
+export const getIds = (categoryIds: string | string[]) => {
+  if (typeof categoryIds === 'string') {
+    return [categoryIds];
+  }
+
+  return categoryIds;
+};
+
 export const getLimit = (limit: number): number => {
   return getValue(limit, DATA_LIST_LIMIT_DEFAULT);
 };
