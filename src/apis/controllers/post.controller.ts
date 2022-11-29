@@ -6,7 +6,8 @@ import {
   IPostCreate,
   IPostFilter,
   IPostRequest,
-  IPostUpdate
+  IPostUpdate,
+  ITokenPayload
 } from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
 import PostService from '~/services/post.service';
@@ -28,7 +29,7 @@ const PostController = {
     return success(res, { data: mapPostToResponse(post) });
   },
   create: async (req: Request, res: Response) => {
-    const { userId } = req.user;
+    const { userId } = req.user as ITokenPayload;
     const postRequest: IPostRequest = req.body;
 
     const postCreate: IPostCreate = {
@@ -41,26 +42,26 @@ const PostController = {
     return success(res, { data: mapPostToResponse(newPost) });
   },
   approve: async (req: Request, res: Response) => {
-    const { userId } = req.user;
+    const { userId } = req.user as ITokenPayload;
     const { id } = req.params;
     const post = await PostService.approve(id, userId);
     return success(res, { data: mapPostToResponse(post) });
   },
   deny: async (req: Request, res: Response) => {
-    const { userId } = req.user;
+    const { userId } = req.user as ITokenPayload;
     const { id } = req.params;
     const { reason } = req.body;
     const post = await PostService.deny(id, reason, userId);
     return success(res, { data: mapPostToResponse(post) });
   },
   markAsRented: async (req: Request, res: Response) => {
-    const { userId } = req.user;
+    const { userId } = req.user as ITokenPayload;
     const { id } = req.params;
     const post = await PostService.markAsRented(id, userId);
     return success(res, { data: mapPostToResponse(post) });
   },
   updateById: async (req: Request, res: Response) => {
-    const { userId } = req.user;
+    const { userId } = req.user as ITokenPayload;
     const { id } = req.params;
     const postRequest: IPostRequest = req.body;
 

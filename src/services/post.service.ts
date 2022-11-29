@@ -194,7 +194,8 @@ const PostService = {
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
-      .populate('images');
+      .populate('images')
+      .exec() as Promise<IPost>;
   },
   approve: async (id: string, updatedById: string) => {
     const post = await Post.findById(id).exec();
@@ -225,7 +226,8 @@ const PostService = {
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
-      .populate('images');
+      .populate('images')
+      .exec() as Promise<IPost>;
   },
   deny: async (id: string, reason: string, updatedById: string) => {
     const post = await Post.findById(id).exec();
@@ -256,7 +258,8 @@ const PostService = {
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
-      .populate('images');
+      .populate('images')
+      .exec() as Promise<IPost>;
   },
   markAsRented: async (id: string, updatedById: string) => {
     const post = await Post.findById(id).exec();
@@ -274,7 +277,8 @@ const PostService = {
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
-      .populate('images');
+      .populate('images')
+      .exec() as Promise<IPost>;
   },
   updateById: async (id: string, postUpdate: IPostUpdate) => {
     const post = await Post.findById(id).exec();
@@ -298,7 +302,7 @@ const PostService = {
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
-      .exec();
+      .exec() as Promise<IPost>;
   }
 };
 

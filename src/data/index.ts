@@ -362,7 +362,7 @@ const init = async () => {
       type: ward.type,
       districtId: districtsCreated.find(
         district => district.name === ward.district
-      )._id
+      )?._id
     };
   });
   await wardModel.create(newWards);

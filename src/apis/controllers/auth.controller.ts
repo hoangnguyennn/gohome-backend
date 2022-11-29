@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { success } from '~/helpers/commonResponse';
 import { mapUserToResponse } from '~/helpers/mapDataToResponse';
+import { ITokenPayload } from '~/interfaces';
 import AuthService from '~/services/auth.service';
 
 const AuthController = {
@@ -15,8 +16,8 @@ const AuthController = {
     return success(res, { token });
   },
   me: async (req: Request, res: Response) => {
-    const tokenPayload = req.user;
-    const user = await AuthService.me(tokenPayload.userId);
+    const { userId } = req.user as ITokenPayload;
+    const user = await AuthService.me(userId);
     return success(res, { data: mapUserToResponse(user) });
   }
 };

@@ -86,7 +86,7 @@ const CategoryService = {
       id,
       { $inc: { count: 1 } },
       { new: true }
-    );
+    ).exec();
   },
   delete: () => {
     console.log('delete');

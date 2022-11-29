@@ -7,7 +7,7 @@ import UploadService from '~/services/upload.service';
 
 const UploadController = {
   upload: async (req: Request, res: Response) => {
-    const filename = req.file.path;
+    const { path: filename } = req.file as Express.Multer.File;
     const { url, publicId } = await UploadService.uploadSingle(filename);
 
     const image: IImageCreate = { url: url, originalUrl: url, publicId };

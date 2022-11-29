@@ -6,6 +6,7 @@ import {
 } from '~/helpers/commonResponse';
 import { IUserFilter } from '~/interfaces';
 import { UserTypes } from '~/interfaces/enums';
+import { IUser } from '~/interfaces/IDocument';
 import User from '~/models/user.model';
 import {
   getLimit,
@@ -24,7 +25,7 @@ const UserService = {
     const username = getValue(dataListFilter.username);
     const fullName = getValue(dataListFilter.fullName);
     const type =
-      dataListFilter.type in UserTypes
+      (dataListFilter.type as string) in UserTypes
         ? Number(dataListFilter.type)
         : undefined;
     const isVerified =
@@ -99,13 +100,11 @@ const UserService = {
       );
     }
 
-    const userUpdated = await User.findByIdAndUpdate(
+    return User.findByIdAndUpdate(
       id,
       { $set: { isVerified: true } },
       { new: true }
-    ).exec();
-
-    return userUpdated;
+    ).exec() as Promise<IUser>;
   }
 };
 
