@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsnd -r tsconfig-paths/register src/server.ts",
     "build": "rm -rf dist && tsc && tsc-alias",
-    "start": "node dist/server.js",
+    "start": "pm2 start dist/server.js -i max",
     "seed": "tsnd -r tsconfig-paths/register src/data/index.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix"
@@ -21,6 +21,7 @@
     "mongoose": "6.2.7",
     "morgan": "1.10.0",
     "multer": "1.4.5-lts.1",
+    "pm2": "5.2.2",
     "slug": "8.0.0",
     "uuid": "9.0.0"
   },
