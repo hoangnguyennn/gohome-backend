@@ -7,6 +7,10 @@
     "dev": "tsnd -r tsconfig-paths/register src/server.ts",
     "build": "rm -rf dist && tsc && tsc-alias",
     "start": "pm2 start dist/server.js -i max",
+    "stop": "pm2 stop all",
+    "delete": "pm2 delete all",
+    "restart": "pnpm stop && pnpm delete && pnpm start",
+    "pm2": "pm2",
     "seed": "tsnd -r tsconfig-paths/register src/data/index.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix"
