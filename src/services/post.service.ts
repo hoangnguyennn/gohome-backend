@@ -45,8 +45,8 @@ const PostService = {
     let queryCount = Post.find({ isRented: false });
 
     if (code) {
-      query = query.find({ code });
-      queryCount = queryCount.find({ code });
+      query = query.find({ code: new RegExp(`^${code}$`, 'i') });
+      queryCount = queryCount.find({ code: new RegExp(`^${code}$`, 'i') });
     }
 
     if (title) {
@@ -92,12 +92,12 @@ const PostService = {
       });
     }
 
-    if (categoryIds) {
+    if (categoryIds.length) {
       query = query.find({ categoryId: { $in: categoryIds } });
       queryCount = queryCount.find({ categoryId: { $in: categoryIds } });
     }
 
-    if (locationIds) {
+    if (locationIds.length) {
       query = query.find({ wardId: { $in: locationIds } });
       queryCount = queryCount.find({ wardId: { $in: locationIds } });
     }
