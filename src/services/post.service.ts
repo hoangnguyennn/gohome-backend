@@ -1,3 +1,4 @@
+import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
   HttpError,
@@ -11,7 +12,9 @@ import {
 } from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
 import { IPost } from '~/interfaces/IDocument';
+import Category from '~/models/category.model';
 import Post from '~/models/post.model';
+import Ward from '~/models/ward.model';
 import {
   getIds,
   getLimit,
@@ -188,6 +191,21 @@ const PostService = {
     return post;
   },
   create: async (post: IPostCreate) => {
+    const category = await Category.findById(post.categoryId).exec();
+
+    if (!category) {
+      throw new HttpError(
+        ERROR_MESSAGES.CATEGORY_NOT_FOUND,
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    const ward = await Ward.findById(post.wardId).exec();
+
+    if (!ward) {
+      throw new HttpError(ERROR_MESSAGES.WARD_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+    }
+
     const newPost = await Post.create(post);
     return Post.findById(newPost._id)
       .populate('category')
@@ -206,7 +224,7 @@ const PostService = {
 
     if (post.verifyStatus === PostVerifyStatuses.APPROVED) {
       throw new HttpError(
-        'Bài đăng đã được phê duyệt trước đó',
+        ERROR_MESSAGES.POST_APPROVED_BEFORE,
         HTTP_STATUS.BAD_REQUEST
       );
     }
@@ -238,7 +256,7 @@ const PostService = {
 
     if (post.verifyStatus === PostVerifyStatuses.DENIED) {
       throw new HttpError(
-        'Bài đăng đã bị từ chối trước đó',
+        ERROR_MESSAGES.POST_DENIED_BEFORE,
         HTTP_STATUS.BAD_REQUEST
       );
     }
@@ -285,6 +303,21 @@ const PostService = {
 
     if (!post) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+    }
+
+    const category = await Category.findById(post.categoryId).exec();
+
+    if (!category) {
+      throw new HttpError(
+        ERROR_MESSAGES.CATEGORY_NOT_FOUND,
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    const ward = await Ward.findById(post.wardId).exec();
+
+    if (!ward) {
+      throw new HttpError(ERROR_MESSAGES.WARD_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
     }
 
     const postParams: any = postUpdate;

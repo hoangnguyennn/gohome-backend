@@ -4,7 +4,7 @@ import { CollectionNames, UserTypes } from '~/interfaces/enums';
 
 const userSchema = new Schema<IUser>(
   {
-    username: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     fullName: { type: String, required: false },
     avatar: { type: String, required: false },

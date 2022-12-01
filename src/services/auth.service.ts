@@ -1,3 +1,4 @@
+import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import { HttpError, HTTP_STATUS } from '~/helpers/commonResponse';
 import User from '~/models/user.model';
 import bcryptUtil from '~/utils/bcrypt.util';
@@ -8,7 +9,10 @@ const AuthService = {
     const user = await User.findOne({ username }).exec();
 
     if (user) {
-      throw new HttpError('User already exists', HTTP_STATUS.BAD_REQUEST);
+      throw new HttpError(
+        ERROR_MESSAGES.USER_ALREADY_EXIST,
+        HTTP_STATUS.BAD_REQUEST
+      );
     }
 
     const hashedPassword = await bcryptUtil.getHashed(password);
@@ -21,12 +25,12 @@ const AuthService = {
     const user = await User.findOne({ username }).exec();
 
     if (!user) {
-      throw new HttpError('User not found', HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
     }
 
     if (!bcryptUtil.equal(password, user.password)) {
       throw new HttpError(
-        'Incorrect username or password',
+        ERROR_MESSAGES.INCORRECT_USERNAME_OR_PASSWORD,
         HTTP_STATUS.UNAUTHORIZED
       );
     }
@@ -38,7 +42,7 @@ const AuthService = {
     const user = await User.findById(userId).exec();
 
     if (!user) {
-      throw new HttpError('User not found', HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
     }
 
     return user;

@@ -1,9 +1,11 @@
+import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { IWardFilter, IWardRequest } from '~/interfaces';
+import District from '~/models/district.model';
 import Ward from '~/models/ward.model';
 import {
   getLimit,
@@ -79,9 +81,27 @@ const WardService = {
     return ward;
   },
   create: async (ward: IWardRequest) => {
+    const district = await District.findById(ward.districtId).exec();
+
+    if (!district) {
+      throw new HttpError(
+        ERROR_MESSAGES.DISTRICT_NOT_FOUND,
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
     return (await Ward.create(ward)).populate('district');
   },
   updateById: async (id: string, wardUpdate: IWardRequest) => {
+    const district = await District.findById(wardUpdate.districtId).exec();
+
+    if (!district) {
+      throw new HttpError(
+        ERROR_MESSAGES.DISTRICT_NOT_FOUND,
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
     const ward = await Ward.findByIdAndUpdate(
       id,
       { $set: wardUpdate },
