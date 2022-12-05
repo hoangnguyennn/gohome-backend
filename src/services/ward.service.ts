@@ -25,10 +25,7 @@ const WardService = {
     const type = getValue(dataListFilter.type);
     const districtId = getValue(dataListFilter.districtId);
 
-    let query = Ward.find()
-      .populate('district')
-      .collation({ locale: 'en' })
-      .sort('districtId type name');
+    let query = Ward.find();
     let queryCount = Ward.find();
 
     if (name) {
@@ -61,18 +58,14 @@ const WardService = {
     }
 
     const [wards, total] = await Promise.all([
-      query.exec(),
+      query.populate('district').exec(),
       queryCount.count().lean().exec()
     ]);
 
     return { data: wards, total };
   },
   getById: async (id: string) => {
-    const ward = await Ward.findById(id)
-      .populate('district')
-      .collation({ locale: 'en' })
-      .sort('districtId type name')
-      .exec();
+    const ward = await Ward.findById(id).populate('district').exec();
 
     if (!ward) {
       throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -108,8 +101,6 @@ const WardService = {
       { new: true }
     )
       .populate('district')
-      .collation({ locale: 'en' })
-      .sort('districtId type name')
       .exec();
 
     if (!ward) {

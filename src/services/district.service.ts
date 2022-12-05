@@ -23,7 +23,7 @@ const DistrictService = {
     const name = getValue(dataListFilter.name);
     const type = getValue(dataListFilter.type);
 
-    let query = District.find().collation({ locale: 'en' }).sort('type name');
+    let query = District.find();
     let queryCount = District.find();
 
     if (name) {

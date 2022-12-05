@@ -22,7 +22,7 @@ const CategoryService = {
     const name = getValue(dataListFilter.name);
     const code = getValue(dataListFilter.code);
 
-    let query = Category.find().collation({ locale: 'en' }).sort('name');
+    let query = Category.find();
     let queryCount = Category.find();
 
     if (name) {

@@ -2,7 +2,8 @@ import {
   DATA_LIST_LIMIT_DEFAULT,
   DATA_LIST_OFFSET_DEFAULT,
   DATA_LIST_SORT_BY_DEFAULT,
-  DATA_LIST_SORT_DIRECTION_DEFAULT
+  DATA_LIST_SORT_DIRECTION_DEFAULT,
+  LIST_OF_FIELDS_AND_SORT_FIELDS
 } from '~/constants';
 import { DataListSortDirection, Nullable } from '~/interfaces';
 
@@ -35,6 +36,11 @@ export const getSortDirection = (direction?: DataListSortDirection) => {
 };
 
 export const getSortBy = (sortBy?: string): Nullable<string> => {
+  const fieldInfo = LIST_OF_FIELDS_AND_SORT_FIELDS.find(
+    item => item.field === sortBy
+  );
+
+  if (fieldInfo) return fieldInfo.sortField;
   return getValue(sortBy, DATA_LIST_SORT_BY_DEFAULT);
 };
 

@@ -4,12 +4,7 @@ import {
   HttpError,
   HTTP_STATUS
 } from '~/helpers/commonResponse';
-import {
-  IDataListFilter,
-  IPostCreate,
-  IPostFilter,
-  IPostUpdate
-} from '~/interfaces';
+import { IPostCreate, IPostFilter, IPostUpdate } from '~/interfaces';
 import { PostVerifyStatuses } from '~/interfaces/enums';
 import { IPost } from '~/interfaces/IDocument';
 import Category from '~/models/category.model';
@@ -42,9 +37,8 @@ const PostService = {
     const locationIds = getIds(dataListFilter.locationIds);
     const ownerPhone = getValue(dataListFilter.ownerPhone);
 
-    let query = Post.find({ isRented: false })
-      .collation({ locale: 'en' })
-      .sort({ verifyStatus: 1, createdAt: 1 });
+    let query = Post.find({ isRented: false });
+
     let queryCount = Post.find({ isRented: false });
 
     if (code) {
@@ -137,15 +131,88 @@ const PostService = {
 
     return { data: posts, total };
   },
-  getRentedList: async (dataListFilter: IDataListFilter<IPost>) => {
+  getRentedList: async (dataListFilter: IPostFilter) => {
     const limit = getLimit(dataListFilter.limit);
     const offset = getOffset(dataListFilter.offset);
     const sortBy = getSortBy(dataListFilter.sortBy);
     const sortDirection = getSortDirection(dataListFilter.sortDirection);
+    const code = getValue(dataListFilter.code);
+    const title = getValue(dataListFilter.title);
+    const createdById = getValue(dataListFilter.createdById);
+    const verifyStatus = getValue(dataListFilter.verifyStatus);
+    const createdAtStart = getValue(dataListFilter.createdAtStart);
+    const createdAtEnd = getValue(dataListFilter.createdAtEnd);
+    const updatedAtStart = getValue(dataListFilter.updatedAtStart);
+    const updatedAtEnd = getValue(dataListFilter.updatedAtEnd);
+    const categoryIds = getIds(dataListFilter.categoryIds);
+    const locationIds = getIds(dataListFilter.locationIds);
+    const ownerPhone = getValue(dataListFilter.ownerPhone);
 
-    let query = Post.find()
-      .collation({ locale: 'en' })
-      .sort({ verifyStatus: 1, createdAt: 1 });
+    let query = Post.find({ isRented: true });
+    let queryCount = Post.find({ isRented: true });
+
+    if (code) {
+      query = query.find({ code: new RegExp(`^${code}$`, 'i') });
+      queryCount = queryCount.find({ code: new RegExp(`^${code}$`, 'i') });
+    }
+
+    if (title) {
+      query = query.find({ title: new RegExp(title, 'i') });
+      queryCount = queryCount.find({ title: new RegExp(title, 'i') });
+    }
+
+    if (createdById) {
+      query = query.find({ createdById });
+      queryCount = queryCount.find({ createdById });
+    }
+
+    if (verifyStatus) {
+      query = query.find({ verifyStatus });
+      queryCount = queryCount.find({ verifyStatus });
+    }
+
+    if (createdAtStart) {
+      query = query.find({ createdAt: { $gte: new Date(createdAtStart) } });
+      queryCount = queryCount.find({
+        createdAt: { $gte: new Date(createdAtStart) }
+      });
+    }
+
+    if (createdAtEnd) {
+      query = query.find({ createdAt: { $lte: new Date(createdAtEnd) } });
+      queryCount = queryCount.find({
+        createdAt: { $lte: new Date(createdAtEnd) }
+      });
+    }
+
+    if (updatedAtStart) {
+      query = query.find({ updatedAt: { $gte: new Date(updatedAtStart) } });
+      queryCount = queryCount.find({
+        updatedAt: { $gte: new Date(updatedAtStart) }
+      });
+    }
+
+    if (updatedAtEnd) {
+      query = query.find({ updatedAt: { $lte: new Date(updatedAtEnd) } });
+      queryCount = queryCount.find({
+        updatedAt: { $lte: new Date(updatedAtEnd) }
+      });
+    }
+
+    if (categoryIds.length) {
+      query = query.find({ categoryId: { $in: categoryIds } });
+      queryCount = queryCount.find({ categoryId: { $in: categoryIds } });
+    }
+
+    if (locationIds.length) {
+      query = query.find({ wardId: { $in: locationIds } });
+      queryCount = queryCount.find({ wardId: { $in: locationIds } });
+    }
+
+    if (ownerPhone) {
+      query = query.find({ ownerPhone: new RegExp(ownerPhone, 'i') });
+      queryCount = queryCount.find({ ownerPhone: new RegExp(ownerPhone, 'i') });
+    }
 
     if (sortBy && sortDirection) {
       query = query
@@ -163,14 +230,13 @@ const PostService = {
 
     const [posts, total] = await Promise.all([
       query
-        .find({ isRented: true })
         .populate('category')
         .populate({ path: 'ward', populate: 'district' })
         .populate('createdBy')
         .populate('updatedBy')
         .populate('images')
         .exec(),
-      Post.find({ isRented: true }).lean().count().exec()
+      queryCount.lean().count().exec()
     ]);
 
     return { data: posts, total };

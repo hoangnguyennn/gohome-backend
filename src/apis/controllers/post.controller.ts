@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { success } from '~/helpers/commonResponse';
 import { mapPostToResponse } from '~/helpers/mapDataToResponse';
 import {
-  IDataListFilter,
   IPostCreate,
   IPostFilter,
   IPostRequest,
@@ -19,7 +18,7 @@ const PostController = {
     return success(res, { total, data: data.map(mapPostToResponse) });
   },
   getRentedList: async (req: Request, res: Response) => {
-    const dataListFilter: IDataListFilter = req.query;
+    const dataListFilter: IPostFilter = req.query;
     const { total, data } = await PostService.getRentedList(dataListFilter);
     return success(res, { total, data: data.map(mapPostToResponse) });
   },

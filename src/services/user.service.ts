@@ -33,9 +33,7 @@ const UserService = {
         ? dataListFilter.isVerified === '1'
         : undefined;
 
-    let query = User.find()
-      .collation({ locale: 'en' })
-      .sort('type fullName username');
+    let query = User.find();
     let queryCount = User.find();
 
     if (username) {
