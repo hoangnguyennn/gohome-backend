@@ -13,6 +13,7 @@ import District from '~/models/district.model';
 import Ward from '~/models/ward.model';
 import {
   getLimit,
+  getObjectId,
   getOffset,
   getSortBy,
   getSortDirection,
@@ -27,7 +28,7 @@ const WardService = {
     const sortDirection = getSortDirection(dataListFilter.sortDirection);
     const name = getValue(dataListFilter.name);
     const type = getValue(dataListFilter.type);
-    const districtId = getValue(dataListFilter.districtId);
+    const districtId = getObjectId(dataListFilter.districtId);
 
     const pipelineState: PipelineStage[] = [];
     const pipelineStateCount: PipelineStage[] = [];
