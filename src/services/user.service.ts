@@ -92,7 +92,9 @@ const UserService = {
     pipelineStateCount.push({ $count: 'total' });
 
     const [users, [{ total }]] = await Promise.all([
-      User.aggregate(pipelineState, aggregateOptions).exec(),
+      pipelineState.length
+        ? User.aggregate(pipelineState, aggregateOptions).exec()
+        : User.find().exec(),
       User.aggregate(pipelineStateCount).exec() as Promise<[{ total: number }]>
     ]);
 

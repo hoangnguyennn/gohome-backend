@@ -1,3 +1,5 @@
+import { AggregateOptions } from 'mongodb';
+import { PipelineStage } from 'mongoose';
 import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
@@ -5,7 +7,7 @@ import {
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { IPostCreate, IPostFilter, IPostUpdate } from '~/interfaces';
-import { PostVerifyStatuses } from '~/interfaces/enums';
+import { CollectionNames, PostVerifyStatuses } from '~/interfaces/enums';
 import { IPost } from '~/interfaces/IDocument';
 import Category from '~/models/category.model';
 import Post from '~/models/post.model';
@@ -13,6 +15,7 @@ import Ward from '~/models/ward.model';
 import {
   getIds,
   getLimit,
+  getObjectId,
   getOffset,
   getSortBy,
   getSortDirection,
@@ -27,8 +30,8 @@ const PostService = {
     const sortDirection = getSortDirection(dataListFilter.sortDirection);
     const code = getValue(dataListFilter.code);
     const title = getValue(dataListFilter.title);
-    const createdById = getValue(dataListFilter.createdById);
-    const verifyStatus = getValue(dataListFilter.verifyStatus);
+    const createdById = getObjectId(dataListFilter.createdById);
+    const verifyStatus = getValue(Number(dataListFilter.verifyStatus));
     const createdAtStart = getValue(dataListFilter.createdAtStart);
     const createdAtEnd = getValue(dataListFilter.createdAtEnd);
     const updatedAtStart = getValue(dataListFilter.updatedAtStart);
@@ -37,99 +40,217 @@ const PostService = {
     const locationIds = getIds(dataListFilter.locationIds);
     const ownerPhone = getValue(dataListFilter.ownerPhone);
 
-    let query = Post.find({ isRented: false });
-
-    let queryCount = Post.find({ isRented: false });
-
-    if (code) {
-      query = query.find({ code: new RegExp(`^${code}$`, 'i') });
-      queryCount = queryCount.find({ code: new RegExp(`^${code}$`, 'i') });
-    }
+    let pipelineState: PipelineStage[] = [];
+    const pipelineStateCount: PipelineStage[] = [];
+    const aggregateOptions: AggregateOptions = { collation: { locale: 'vi' } };
 
     if (title) {
-      query = query.find({ title: new RegExp(title, 'i') });
-      queryCount = queryCount.find({ title: new RegExp(title, 'i') });
+      pipelineState.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${title}"` } },
+            { title: { $regex: new RegExp(title, 'i') } }
+          ]
+        }
+      });
+      pipelineStateCount.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${title}"` } },
+            { title: { $regex: new RegExp(title, 'i') } }
+          ]
+        }
+      });
+    }
+
+    pipelineState.push({ $match: { isRented: false } });
+    pipelineStateCount.push({ $match: { isRented: false } });
+
+    if (code) {
+      pipelineState.push({
+        $match: { code: { $regex: new RegExp(`^${code}$`, 'i') } }
+      });
+      pipelineStateCount.push({
+        $match: { code: { $regex: new RegExp(`^${code}$`, 'i') } }
+      });
     }
 
     if (createdById) {
-      query = query.find({ createdById });
-      queryCount = queryCount.find({ createdById });
+      pipelineState.push({ $match: { createdById } });
+      pipelineStateCount.push({ $match: { createdById } });
     }
 
-    if (verifyStatus) {
-      query = query.find({ verifyStatus });
-      queryCount = queryCount.find({ verifyStatus });
+    if (verifyStatus in PostVerifyStatuses) {
+      pipelineState.push({ $match: { verifyStatus } });
+      pipelineStateCount.push({ $match: { verifyStatus } });
     }
 
     if (createdAtStart) {
-      query = query.find({ createdAt: { $gte: new Date(createdAtStart) } });
-      queryCount = queryCount.find({
-        createdAt: { $gte: new Date(createdAtStart) }
+      pipelineState.push({
+        $match: { createdAt: { $gte: new Date(createdAtStart) } }
+      });
+      pipelineStateCount.push({
+        $match: { createdAt: { $gte: new Date(createdAtStart) } }
       });
     }
 
     if (createdAtEnd) {
-      query = query.find({ createdAt: { $lte: new Date(createdAtEnd) } });
-      queryCount = queryCount.find({
-        createdAt: { $lte: new Date(createdAtEnd) }
+      pipelineState.push({
+        $match: { createdAt: { $lte: new Date(createdAtEnd) } }
+      });
+      pipelineStateCount.push({
+        $match: { createdAt: { $lte: new Date(createdAtEnd) } }
       });
     }
 
     if (updatedAtStart) {
-      query = query.find({ updatedAt: { $gte: new Date(updatedAtStart) } });
-      queryCount = queryCount.find({
-        updatedAt: { $gte: new Date(updatedAtStart) }
+      pipelineState.push({
+        $match: { updatedAt: { $lte: new Date(updatedAtStart) } }
+      });
+      pipelineStateCount.push({
+        $match: { updatedAt: { $lte: new Date(updatedAtStart) } }
       });
     }
 
     if (updatedAtEnd) {
-      query = query.find({ updatedAt: { $lte: new Date(updatedAtEnd) } });
-      queryCount = queryCount.find({
-        updatedAt: { $lte: new Date(updatedAtEnd) }
+      pipelineState.push({
+        $match: { updatedAt: { $lte: new Date(updatedAtEnd) } }
+      });
+      pipelineStateCount.push({
+        $match: { updatedAt: { $lte: new Date(updatedAtEnd) } }
       });
     }
 
     if (categoryIds.length) {
-      query = query.find({ categoryId: { $in: categoryIds } });
-      queryCount = queryCount.find({ categoryId: { $in: categoryIds } });
+      pipelineState.push({
+        $match: { categoryId: { $in: categoryIds } }
+      });
+      pipelineStateCount.push({
+        $match: { categoryId: { $in: categoryIds } }
+      });
     }
 
     if (locationIds.length) {
-      query = query.find({ wardId: { $in: locationIds } });
-      queryCount = queryCount.find({ wardId: { $in: locationIds } });
+      pipelineState.push({
+        $match: { wardId: { $in: locationIds } }
+      });
+      pipelineStateCount.push({
+        $match: { wardId: { $in: locationIds } }
+      });
     }
 
     if (ownerPhone) {
-      query = query.find({ ownerPhone: new RegExp(ownerPhone, 'i') });
-      queryCount = queryCount.find({ ownerPhone: new RegExp(ownerPhone, 'i') });
+      pipelineState.push({
+        $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
+      });
+      pipelineStateCount.push({
+        $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
+      });
     }
 
     if (sortBy && sortDirection) {
-      query = query
-        .collation({ locale: 'en' })
-        .sort({ [sortBy]: sortDirection });
-    }
-
-    if (limit) {
-      query = query.limit(limit);
+      pipelineState.push({ $sort: { [sortBy]: sortDirection } });
     }
 
     if (offset) {
-      query = query.skip(offset);
+      pipelineState.push({ $skip: offset });
     }
 
-    const [posts, total] = await Promise.all([
-      query
-        .populate('category')
-        .populate({ path: 'ward', populate: 'district' })
-        .populate('createdBy')
-        .populate('updatedBy')
-        .populate('images')
-        .exec(),
-      queryCount.lean().count().exec()
+    if (limit) {
+      pipelineState.push({ $limit: limit });
+    }
+
+    pipelineState = pipelineState.concat([
+      {
+        $lookup: {
+          from: CollectionNames.CATEGORY,
+          localField: 'categoryId',
+          foreignField: '_id',
+          as: 'category'
+        }
+      },
+      {
+        $unwind: {
+          path: '$category',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.USER,
+          localField: 'createdById',
+          foreignField: '_id',
+          as: 'createdBy'
+        }
+      },
+      {
+        $unwind: {
+          path: '$createdBy',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.USER,
+          localField: 'updatedById',
+          foreignField: '_id',
+          as: 'updatedBy'
+        }
+      },
+      {
+        $unwind: {
+          path: '$updatedBy',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.IMAGE,
+          localField: 'imagesId',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.WARD,
+          localField: 'wardId',
+          foreignField: '_id',
+          as: 'ward'
+        }
+      },
+      {
+        $unwind: {
+          path: '$ward',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.DISTRICT,
+          localField: 'ward.districtId',
+          foreignField: '_id',
+          as: 'ward.district'
+        }
+      },
+      {
+        $unwind: {
+          path: '$ward.district',
+          preserveNullAndEmptyArrays: true
+        }
+      }
     ]);
 
-    return { data: posts, total };
+    pipelineStateCount.push({ $count: 'total' });
+
+    const [posts, count] = await Promise.all([
+      pipelineState.length
+        ? Post.aggregate(pipelineState, aggregateOptions).exec()
+        : Post.find().exec(),
+      Post.aggregate(pipelineStateCount).exec()
+    ]);
+
+    return { data: posts, total: count[0]?.total || 0 };
   },
   getRentedList: async (dataListFilter: IPostFilter) => {
     const limit = getLimit(dataListFilter.limit);
@@ -138,8 +259,8 @@ const PostService = {
     const sortDirection = getSortDirection(dataListFilter.sortDirection);
     const code = getValue(dataListFilter.code);
     const title = getValue(dataListFilter.title);
-    const createdById = getValue(dataListFilter.createdById);
-    const verifyStatus = getValue(dataListFilter.verifyStatus);
+    const createdById = getObjectId(dataListFilter.createdById);
+    const verifyStatus = getValue(Number(dataListFilter.verifyStatus));
     const createdAtStart = getValue(dataListFilter.createdAtStart);
     const createdAtEnd = getValue(dataListFilter.createdAtEnd);
     const updatedAtStart = getValue(dataListFilter.updatedAtStart);
@@ -148,98 +269,217 @@ const PostService = {
     const locationIds = getIds(dataListFilter.locationIds);
     const ownerPhone = getValue(dataListFilter.ownerPhone);
 
-    let query = Post.find({ isRented: true });
-    let queryCount = Post.find({ isRented: true });
-
-    if (code) {
-      query = query.find({ code: new RegExp(`^${code}$`, 'i') });
-      queryCount = queryCount.find({ code: new RegExp(`^${code}$`, 'i') });
-    }
+    let pipelineState: PipelineStage[] = [];
+    const pipelineStateCount: PipelineStage[] = [];
+    const aggregateOptions: AggregateOptions = { collation: { locale: 'vi' } };
 
     if (title) {
-      query = query.find({ title: new RegExp(title, 'i') });
-      queryCount = queryCount.find({ title: new RegExp(title, 'i') });
+      pipelineState.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${title}"` } },
+            { title: { $regex: new RegExp(title, 'i') } }
+          ]
+        }
+      });
+      pipelineStateCount.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${title}"` } },
+            { title: { $regex: new RegExp(title, 'i') } }
+          ]
+        }
+      });
+    }
+
+    pipelineState.push({ $match: { isRented: true } });
+    pipelineStateCount.push({ $match: { isRented: true } });
+
+    if (code) {
+      pipelineState.push({
+        $match: { code: { $regex: new RegExp(`^${code}$`, 'i') } }
+      });
+      pipelineStateCount.push({
+        $match: { code: { $regex: new RegExp(`^${code}$`, 'i') } }
+      });
     }
 
     if (createdById) {
-      query = query.find({ createdById });
-      queryCount = queryCount.find({ createdById });
+      pipelineState.push({ $match: { createdById } });
+      pipelineStateCount.push({ $match: { createdById } });
     }
 
-    if (verifyStatus) {
-      query = query.find({ verifyStatus });
-      queryCount = queryCount.find({ verifyStatus });
+    if (verifyStatus in PostVerifyStatuses) {
+      pipelineState.push({ $match: { verifyStatus } });
+      pipelineStateCount.push({ $match: { verifyStatus } });
     }
 
     if (createdAtStart) {
-      query = query.find({ createdAt: { $gte: new Date(createdAtStart) } });
-      queryCount = queryCount.find({
-        createdAt: { $gte: new Date(createdAtStart) }
+      pipelineState.push({
+        $match: { createdAt: { $gte: new Date(createdAtStart) } }
+      });
+      pipelineStateCount.push({
+        $match: { createdAt: { $gte: new Date(createdAtStart) } }
       });
     }
 
     if (createdAtEnd) {
-      query = query.find({ createdAt: { $lte: new Date(createdAtEnd) } });
-      queryCount = queryCount.find({
-        createdAt: { $lte: new Date(createdAtEnd) }
+      pipelineState.push({
+        $match: { createdAt: { $lte: new Date(createdAtEnd) } }
+      });
+      pipelineStateCount.push({
+        $match: { createdAt: { $lte: new Date(createdAtEnd) } }
       });
     }
 
     if (updatedAtStart) {
-      query = query.find({ updatedAt: { $gte: new Date(updatedAtStart) } });
-      queryCount = queryCount.find({
-        updatedAt: { $gte: new Date(updatedAtStart) }
+      pipelineState.push({
+        $match: { updatedAt: { $lte: new Date(updatedAtStart) } }
+      });
+      pipelineStateCount.push({
+        $match: { updatedAt: { $lte: new Date(updatedAtStart) } }
       });
     }
 
     if (updatedAtEnd) {
-      query = query.find({ updatedAt: { $lte: new Date(updatedAtEnd) } });
-      queryCount = queryCount.find({
-        updatedAt: { $lte: new Date(updatedAtEnd) }
+      pipelineState.push({
+        $match: { updatedAt: { $lte: new Date(updatedAtEnd) } }
+      });
+      pipelineStateCount.push({
+        $match: { updatedAt: { $lte: new Date(updatedAtEnd) } }
       });
     }
 
     if (categoryIds.length) {
-      query = query.find({ categoryId: { $in: categoryIds } });
-      queryCount = queryCount.find({ categoryId: { $in: categoryIds } });
+      pipelineState.push({
+        $match: { categoryId: { $in: categoryIds } }
+      });
+      pipelineStateCount.push({
+        $match: { categoryId: { $in: categoryIds } }
+      });
     }
 
     if (locationIds.length) {
-      query = query.find({ wardId: { $in: locationIds } });
-      queryCount = queryCount.find({ wardId: { $in: locationIds } });
+      pipelineState.push({
+        $match: { wardId: { $in: locationIds } }
+      });
+      pipelineStateCount.push({
+        $match: { wardId: { $in: locationIds } }
+      });
     }
 
     if (ownerPhone) {
-      query = query.find({ ownerPhone: new RegExp(ownerPhone, 'i') });
-      queryCount = queryCount.find({ ownerPhone: new RegExp(ownerPhone, 'i') });
+      pipelineState.push({
+        $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
+      });
+      pipelineStateCount.push({
+        $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
+      });
     }
 
     if (sortBy && sortDirection) {
-      query = query
-        .collation({ locale: 'en' })
-        .sort({ [sortBy]: sortDirection });
-    }
-
-    if (limit) {
-      query = query.limit(limit);
+      pipelineState.push({ $sort: { [sortBy]: sortDirection } });
     }
 
     if (offset) {
-      query = query.skip(offset);
+      pipelineState.push({ $skip: offset });
     }
 
-    const [posts, total] = await Promise.all([
-      query
-        .populate('category')
-        .populate({ path: 'ward', populate: 'district' })
-        .populate('createdBy')
-        .populate('updatedBy')
-        .populate('images')
-        .exec(),
-      queryCount.lean().count().exec()
+    if (limit) {
+      pipelineState.push({ $limit: limit });
+    }
+
+    pipelineState = pipelineState.concat([
+      {
+        $lookup: {
+          from: CollectionNames.CATEGORY,
+          localField: 'categoryId',
+          foreignField: '_id',
+          as: 'category'
+        }
+      },
+      {
+        $unwind: {
+          path: '$category',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.USER,
+          localField: 'createdById',
+          foreignField: '_id',
+          as: 'createdBy'
+        }
+      },
+      {
+        $unwind: {
+          path: '$createdBy',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.USER,
+          localField: 'updatedById',
+          foreignField: '_id',
+          as: 'updatedBy'
+        }
+      },
+      {
+        $unwind: {
+          path: '$updatedBy',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.IMAGE,
+          localField: 'imagesId',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.WARD,
+          localField: 'wardId',
+          foreignField: '_id',
+          as: 'ward'
+        }
+      },
+      {
+        $unwind: {
+          path: '$ward',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: CollectionNames.DISTRICT,
+          localField: 'ward.districtId',
+          foreignField: '_id',
+          as: 'ward.district'
+        }
+      },
+      {
+        $unwind: {
+          path: '$ward.district',
+          preserveNullAndEmptyArrays: true
+        }
+      }
     ]);
 
-    return { data: posts, total };
+    pipelineStateCount.push({ $count: 'total' });
+
+    const [posts, count] = await Promise.all([
+      pipelineState.length
+        ? Post.aggregate(pipelineState, aggregateOptions).exec()
+        : Post.find().exec(),
+      Post.aggregate(pipelineStateCount).exec() as Promise<[{ total: number }]>
+    ]);
+
+    return { data: posts, total: count[0]?.total || 0 };
   },
   getById: async (id: string) => {
     const post = await Post.findById(id)

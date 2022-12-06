@@ -68,7 +68,9 @@ const DistrictService = {
     pipelineStateCount.push({ $count: 'total' });
 
     const [districts, [{ total }]] = await Promise.all([
-      District.aggregate(pipelineState, aggregateOptions).exec(),
+      pipelineState.length
+        ? District.aggregate(pipelineState, aggregateOptions).exec()
+        : District.find().exec(),
       District.aggregate(pipelineStateCount).exec() as Promise<
         [{ total: number }]
       >

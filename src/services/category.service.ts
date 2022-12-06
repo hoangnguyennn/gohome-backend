@@ -67,7 +67,9 @@ const CategoryService = {
     pipelineStateCount.push({ $count: 'total' });
 
     const [categories, [{ total }]] = await Promise.all([
-      Category.aggregate(pipelineState, aggregateOptions).exec(),
+      pipelineState.length
+        ? Category.aggregate(pipelineState, aggregateOptions).exec()
+        : Category.find().exec(),
       Category.aggregate(pipelineStateCount).exec() as Promise<
         [{ total: number }]
       >

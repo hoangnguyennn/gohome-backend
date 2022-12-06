@@ -7,7 +7,7 @@ import Category from './category.model';
 const postSchema = new Schema<IPost>(
   {
     code: { type: String, required: true },
-    title: { type: String, required: true },
+    title: { type: String, required: true, index: true },
     slug: { type: String, required: true },
     categoryId: { type: Schema.Types.ObjectId, required: true },
     wardId: { type: Schema.Types.ObjectId, required: true },
@@ -41,6 +41,8 @@ const postSchema = new Schema<IPost>(
     }
   }
 );
+
+postSchema.index({ title: 'text' });
 
 postSchema.virtual('category', {
   ref: CollectionNames.CATEGORY,

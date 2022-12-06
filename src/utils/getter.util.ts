@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import {
   DATA_LIST_LIMIT_DEFAULT,
   DATA_LIST_OFFSET_DEFAULT,
@@ -8,12 +9,12 @@ import {
 import { DataListSortDirection, Nullable } from '~/interfaces';
 
 export const getIds = (categoryIds?: string | string[]) => {
-  if (typeof categoryIds === 'string') {
-    return [categoryIds];
+  if (typeof categoryIds === 'string' && ObjectId.isValid(categoryIds)) {
+    return [new ObjectId(categoryIds)];
   }
 
   if (Array.isArray(categoryIds)) {
-    return categoryIds;
+    return categoryIds.filter(ObjectId.isValid).map(id => new ObjectId(id));
   }
 
   return [];
@@ -21,6 +22,12 @@ export const getIds = (categoryIds?: string | string[]) => {
 
 export const getLimit = (limit?: number): number => {
   return Number(getValue(limit, DATA_LIST_LIMIT_DEFAULT));
+};
+
+export const getObjectId = (id?: string) => {
+  if (ObjectId.isValid(String(id))) {
+    return new ObjectId(id);
+  }
 };
 
 export const getOffset = (offset?: number): number => {

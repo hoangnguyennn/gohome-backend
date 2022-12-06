@@ -70,7 +70,12 @@ const WardService = {
         as: 'district'
       }
     });
-    pipelineState.push({ $unwind: '$district' });
+    pipelineState.push({
+      $unwind: {
+        path: '$district',
+        preserveNullAndEmptyArrays: true
+      }
+    });
 
     if (sortBy && sortDirection) {
       pipelineState.push({ $sort: { [sortBy]: sortDirection } });
