@@ -6,6 +6,7 @@ import {
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { IDistrictFilter, IDistrictRequest } from '~/interfaces';
+import { IDistrict } from '~/interfaces/IDocument';
 import District from '~/models/district.model';
 import Ward from '~/models/ward.model';
 import {
@@ -67,16 +68,14 @@ const DistrictService = {
 
     pipelineStateCount.push({ $count: 'total' });
 
-    const [districts, [{ total }]] = await Promise.all([
+    const [districts, count] = await Promise.all([
       pipelineState.length
         ? District.aggregate(pipelineState, aggregateOptions).exec()
         : District.find().exec(),
-      District.aggregate(pipelineStateCount).exec() as Promise<
-        [{ total: number }]
-      >
+      District.aggregate(pipelineStateCount).exec()
     ]);
 
-    return { data: districts, total };
+    return { data: districts as IDistrict[], total: count[0]?.total || 0 };
   },
   getById: async (id: string) => {
     const district = await District.findById(id).exec();

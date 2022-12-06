@@ -250,7 +250,7 @@ const PostService = {
       Post.aggregate(pipelineStateCount).exec()
     ]);
 
-    return { data: posts, total: count[0]?.total || 0 };
+    return { data: posts as IPost[], total: count[0]?.total || 0 };
   },
   getRentedList: async (dataListFilter: IPostFilter) => {
     const limit = getLimit(dataListFilter.limit);
@@ -479,7 +479,7 @@ const PostService = {
       Post.aggregate(pipelineStateCount).exec() as Promise<[{ total: number }]>
     ]);
 
-    return { data: posts, total: count[0]?.total || 0 };
+    return { data: posts as IPost[], total: count[0]?.total || 0 };
   },
   getById: async (id: string) => {
     const post = await Post.findById(id)

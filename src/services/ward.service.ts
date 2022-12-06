@@ -91,12 +91,12 @@ const WardService = {
 
     pipelineStateCount.push({ $count: 'total' });
 
-    const [wards, [{ total }]] = await Promise.all([
+    const [wards, count] = await Promise.all([
       Ward.aggregate(pipelineState, aggregateOptions).exec(),
-      Ward.aggregate(pipelineStateCount).exec() as Promise<[{ total: number }]>
+      Ward.aggregate(pipelineStateCount).exec()
     ]);
 
-    return { data: wards as IWard[], total };
+    return { data: wards as IWard[], total: count[0]?.total || 0 };
   },
   getById: async (id: string) => {
     const ward = await Ward.findById(id).populate('district').exec();

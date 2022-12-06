@@ -6,6 +6,7 @@ import {
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { ICategoryFilter, ICategoryRequest } from '~/interfaces';
+import { ICategory } from '~/interfaces/IDocument';
 import Category from '~/models/category.model';
 import {
   getLimit,
@@ -66,16 +67,14 @@ const CategoryService = {
 
     pipelineStateCount.push({ $count: 'total' });
 
-    const [categories, [{ total }]] = await Promise.all([
+    const [categories, count] = await Promise.all([
       pipelineState.length
         ? Category.aggregate(pipelineState, aggregateOptions).exec()
         : Category.find().exec(),
-      Category.aggregate(pipelineStateCount).exec() as Promise<
-        [{ total: number }]
-      >
+      Category.aggregate(pipelineStateCount).exec()
     ]);
 
-    return { data: categories, total };
+    return { data: categories as ICategory[], total: count[0]?.total || 0 };
   },
   getById: async (id: string) => {
     const category = await Category.findById(id).exec();
