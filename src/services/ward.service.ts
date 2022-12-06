@@ -1,3 +1,5 @@
+import { AggregateOptions } from 'mongodb';
+import { PipelineStage } from 'mongoose';
 import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
@@ -5,6 +7,8 @@ import {
   HTTP_STATUS
 } from '~/helpers/commonResponse';
 import { IWardFilter, IWardRequest } from '~/interfaces';
+import { CollectionNames } from '~/interfaces/enums';
+import { IWard } from '~/interfaces/IDocument';
 import District from '~/models/district.model';
 import Ward from '~/models/ward.model';
 import {
@@ -25,44 +29,69 @@ const WardService = {
     const type = getValue(dataListFilter.type);
     const districtId = getValue(dataListFilter.districtId);
 
-    let query = Ward.find();
-    let queryCount = Ward.find();
+    const pipelineState: PipelineStage[] = [];
+    const pipelineStateCount: PipelineStage[] = [];
+    const aggregateOptions: AggregateOptions = { collation: { locale: 'vi' } };
 
     if (name) {
-      query = query.find({ name: new RegExp(name, 'i') });
-      queryCount = queryCount.find({ name: new RegExp(name, 'i') });
+      pipelineState.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${name}"` } },
+            { name: { $regex: new RegExp(name, 'i') } }
+          ]
+        }
+      });
+      pipelineStateCount.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${name}"` } },
+            { name: { $regex: new RegExp(name, 'i') } }
+          ]
+        }
+      });
     }
 
     if (type) {
-      query = query.find({ type });
-      queryCount = queryCount.find({ type });
+      pipelineState.push({ $match: { type } });
+      pipelineStateCount.push({ $match: { type } });
     }
 
     if (districtId) {
-      query = query.find({ districtId });
-      queryCount = queryCount.find({ districtId });
+      pipelineState.push({ $match: { districtId } });
+      pipelineStateCount.push({ $match: { districtId } });
     }
+
+    pipelineState.push({
+      $lookup: {
+        from: CollectionNames.DISTRICT,
+        localField: 'districtId',
+        foreignField: '_id',
+        as: 'district'
+      }
+    });
+    pipelineState.push({ $unwind: '$district' });
 
     if (sortBy && sortDirection) {
-      query = query
-        .collation({ locale: 'en' })
-        .sort({ [sortBy]: sortDirection });
-    }
-
-    if (limit) {
-      query = query.limit(limit);
+      pipelineState.push({ $sort: { [sortBy]: sortDirection } });
     }
 
     if (offset) {
-      query = query.skip(offset);
+      pipelineState.push({ $skip: offset });
     }
 
-    const [wards, total] = await Promise.all([
-      query.populate('district').exec(),
-      queryCount.count().lean().exec()
+    if (limit) {
+      pipelineState.push({ $limit: limit });
+    }
+
+    pipelineStateCount.push({ $count: 'total' });
+
+    const [wards, [{ total }]] = await Promise.all([
+      Ward.aggregate(pipelineState, aggregateOptions).exec(),
+      Ward.aggregate(pipelineStateCount).exec() as Promise<[{ total: number }]>
     ]);
 
-    return { data: wards, total };
+    return { data: wards as IWard[], total };
   },
   getById: async (id: string) => {
     const ward = await Ward.findById(id).populate('district').exec();

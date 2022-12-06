@@ -4,7 +4,7 @@ import { IWard } from '~/interfaces/IDocument';
 
 const wardSchema = new Schema<IWard>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, index: true },
     type: { type: String, enum: WardTypes, required: true },
     districtId: { type: Schema.Types.ObjectId, required: true },
     isHide: { type: Boolean, default: false },
@@ -17,6 +17,8 @@ const wardSchema = new Schema<IWard>(
     }
   }
 );
+
+wardSchema.index({ name: 'text' });
 
 wardSchema.virtual('district', {
   ref: CollectionNames.DISTRICT,
