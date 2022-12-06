@@ -1,3 +1,5 @@
+import { AggregateOptions } from 'mongodb';
+import { PipelineStage } from 'mongoose';
 import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
@@ -33,49 +35,68 @@ const UserService = {
         ? dataListFilter.isVerified === '1'
         : undefined;
 
-    let query = User.find();
-    let queryCount = User.find();
-
-    if (username) {
-      query = query.find({ username: new RegExp(username, 'i') });
-      queryCount = queryCount.find({ username: new RegExp(username, 'i') });
-    }
+    const pipelineState: PipelineStage[] = [];
+    const pipelineStateCount: PipelineStage[] = [];
+    const aggregateOptions: AggregateOptions = { collation: { locale: 'vi' } };
 
     if (fullName) {
-      query = query.find({ fullName: new RegExp(fullName, 'i') });
-      queryCount = queryCount.find({ fullName: new RegExp(fullName, 'i') });
+      pipelineState.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${fullName}"` } },
+            { fullName: { $regex: new RegExp(fullName, 'i') } }
+          ]
+        }
+      });
+      pipelineStateCount.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${fullName}"` } },
+            { fullName: { $regex: new RegExp(fullName, 'i') } }
+          ]
+        }
+      });
+    }
+
+    if (username) {
+      pipelineState.push({
+        $match: { username: { $regex: new RegExp(username, 'i') } }
+      });
+      pipelineStateCount.push({
+        $match: { username: { $regex: new RegExp(username, 'i') } }
+      });
     }
 
     if (type !== undefined) {
-      query = query.find({ type });
-      queryCount = queryCount.find({ type });
+      pipelineState.push({ $match: { type } });
+      pipelineStateCount.push({ $match: { type } });
     }
 
     if (isVerified !== undefined) {
-      query = query.find({ isVerified });
-      queryCount = queryCount.find({ isVerified });
+      pipelineState.push({ $match: { isVerified } });
+      pipelineStateCount.push({ $match: { isVerified } });
     }
 
     if (sortBy && sortDirection) {
-      query = query
-        .collation({ locale: 'en' })
-        .sort({ [sortBy]: sortDirection });
-    }
-
-    if (limit) {
-      query = query.limit(limit);
+      pipelineState.push({ $sort: { [sortBy]: sortDirection } });
     }
 
     if (offset) {
-      query = query.skip(offset);
+      pipelineState.push({ $skip: offset });
     }
 
-    const [users, total] = await Promise.all([
-      query.exec(),
-      queryCount.lean().count().exec()
+    if (limit) {
+      pipelineState.push({ $limit: limit });
+    }
+
+    pipelineStateCount.push({ $count: 'total' });
+
+    const [users, [{ total }]] = await Promise.all([
+      User.aggregate(pipelineState, aggregateOptions).exec(),
+      User.aggregate(pipelineStateCount).exec() as Promise<[{ total: number }]>
     ]);
 
-    return { data: users, total };
+    return { data: users as IUser[], total };
   },
   getById: async (id: string) => {
     const user = await User.findById(id).exec();

@@ -6,7 +6,7 @@ const userSchema = new Schema<IUser>(
   {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    fullName: { type: String, required: false },
+    fullName: { type: String, required: false, index: true },
     avatar: { type: String, required: false },
     type: { type: Number, enum: UserTypes, default: UserTypes.EMPLOYEE },
     isHide: { type: Boolean, default: false },
@@ -20,5 +20,7 @@ const userSchema = new Schema<IUser>(
     }
   }
 );
+
+userSchema.index({ fullName: 'text' });
 
 export default model<IUser>(CollectionNames.USER, userSchema);

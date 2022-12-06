@@ -20,11 +20,11 @@ export const getIds = (categoryIds?: string | string[]) => {
 };
 
 export const getLimit = (limit?: number): number => {
-  return getValue(limit, DATA_LIST_LIMIT_DEFAULT);
+  return Number(getValue(limit, DATA_LIST_LIMIT_DEFAULT));
 };
 
 export const getOffset = (offset?: number): number => {
-  return getValue(offset, DATA_LIST_OFFSET_DEFAULT);
+  return Number(getValue(offset, DATA_LIST_OFFSET_DEFAULT));
 };
 
 export const getSortDirection = (direction?: DataListSortDirection) => {
