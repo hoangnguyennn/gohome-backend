@@ -1,3 +1,5 @@
+import { AggregateOptions } from 'mongodb';
+import { PipelineStage } from 'mongoose';
 import {
   COMMON_MESSAGE,
   HttpError,
@@ -22,36 +24,53 @@ const CategoryService = {
     const name = getValue(dataListFilter.name);
     const code = getValue(dataListFilter.code);
 
-    let query = Category.find();
-    let queryCount = Category.find();
+    const pipelineState: PipelineStage[] = [];
+    const pipelineStateCount: PipelineStage[] = [];
+    const aggregateOptions: AggregateOptions = { collation: { locale: 'vi' } };
 
     if (name) {
-      query = query.find({ name: new RegExp(name, 'i') });
-      queryCount = queryCount.find({ name: new RegExp(name, 'i') });
+      pipelineState.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${name}"` } },
+            { name: { $regex: new RegExp(name, 'i') } }
+          ]
+        }
+      });
+      pipelineStateCount.push({
+        $match: {
+          $or: [
+            { $text: { $search: `"${name}"` } },
+            { name: { $regex: new RegExp(name, 'i') } }
+          ]
+        }
+      });
     }
 
     if (code) {
-      query = query.find({ code: new RegExp(code, 'i') });
-      queryCount = queryCount.find({ code: new RegExp(code, 'i') });
+      pipelineState.push({ $match: { code } });
+      pipelineStateCount.push({ $match: { code } });
     }
 
     if (sortBy && sortDirection) {
-      query = query
-        .collation({ locale: 'en' })
-        .sort({ [sortBy]: sortDirection });
-    }
-
-    if (limit) {
-      query = query.limit(limit);
+      pipelineState.push({ $sort: { [sortBy]: sortDirection } });
     }
 
     if (offset) {
-      query = query.skip(offset);
+      pipelineState.push({ $skip: offset });
     }
 
-    const [categories, total] = await Promise.all([
-      query.exec(),
-      queryCount.lean().count().exec()
+    if (limit) {
+      pipelineState.push({ $limit: limit });
+    }
+
+    pipelineStateCount.push({ $count: 'total' });
+
+    const [categories, [{ total }]] = await Promise.all([
+      Category.aggregate(pipelineState, aggregateOptions).exec(),
+      Category.aggregate(pipelineStateCount).exec() as Promise<
+        [{ total: number }]
+      >
     ]);
 
     return { data: categories, total };

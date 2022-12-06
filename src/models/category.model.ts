@@ -4,7 +4,7 @@ import { ICategory } from '~/interfaces/IDocument';
 
 const categorySchema = new Schema<ICategory>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, index: true },
     code: { type: String, required: true },
     count: { type: Number, default: 0 },
     isHide: { type: Boolean, default: false },
@@ -17,5 +17,7 @@ const categorySchema = new Schema<ICategory>(
     }
   }
 );
+
+categorySchema.index({ name: 'text' });
 
 export default model<ICategory>(CollectionNames.CATEGORY, categorySchema);
