@@ -156,6 +156,23 @@ const PostService = {
       pipelineStateCount.push({ $match: { isHide } });
     }
 
+    pipelineState = pipelineState.concat([
+      {
+        $lookup: {
+          from: CollectionNames.USER,
+          localField: 'createdById',
+          foreignField: '_id',
+          as: 'createdBy'
+        }
+      },
+      {
+        $unwind: {
+          path: '$createdBy',
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ]);
+
     if (sortBy && sortDirection) {
       pipelineState.push({ $sort: { [sortBy]: sortDirection } });
     }
@@ -180,20 +197,6 @@ const PostService = {
       {
         $unwind: {
           path: '$category',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $lookup: {
-          from: CollectionNames.USER,
-          localField: 'createdById',
-          foreignField: '_id',
-          as: 'createdBy'
-        }
-      },
-      {
-        $unwind: {
-          path: '$createdBy',
           preserveNullAndEmptyArrays: true
         }
       },
@@ -391,6 +394,23 @@ const PostService = {
       pipelineStateCount.push({ $match: { isHide } });
     }
 
+    pipelineState = pipelineState.concat([
+      {
+        $lookup: {
+          from: CollectionNames.USER,
+          localField: 'createdById',
+          foreignField: '_id',
+          as: 'createdBy'
+        }
+      },
+      {
+        $unwind: {
+          path: '$createdBy',
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ]);
+
     if (sortBy && sortDirection) {
       pipelineState.push({ $sort: { [sortBy]: sortDirection } });
     }
@@ -415,20 +435,6 @@ const PostService = {
       {
         $unwind: {
           path: '$category',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $lookup: {
-          from: CollectionNames.USER,
-          localField: 'createdById',
-          foreignField: '_id',
-          as: 'createdBy'
-        }
-      },
-      {
-        $unwind: {
-          path: '$createdBy',
           preserveNullAndEmptyArrays: true
         }
       },

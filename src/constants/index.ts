@@ -12,6 +12,10 @@ export const LIST_OF_FIELDS_AND_SORT_FIELDS = [
   {
     field: 'district',
     sortField: 'district.name'
+  },
+  {
+    field: 'createdBy',
+    sortField: 'createdBy.fullName'
   }
 ];
 
