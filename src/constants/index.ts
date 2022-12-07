@@ -14,3 +14,10 @@ export const LIST_OF_FIELDS_AND_SORT_FIELDS = [
     sortField: 'district.name'
   }
 ];
+
+export const TRUE_STRING = 'true';
+export const FALSE_STRING = 'false';
+
+export const DATA_TYPES = {
+  BOOLEAN: 'boolean'
+};

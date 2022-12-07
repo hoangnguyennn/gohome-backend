@@ -81,6 +81,7 @@ export interface IPostFilter extends IDataListFilter<IDistrict> {
   categoryIds?: string | string[];
   locationIds?: string | string[];
   ownerPhone?: string;
+  isHide?: string;
 }
 
 export interface IPostRequest {

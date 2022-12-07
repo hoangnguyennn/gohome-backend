@@ -4,7 +4,9 @@ import {
   DATA_LIST_OFFSET_DEFAULT,
   DATA_LIST_SORT_BY_DEFAULT,
   DATA_LIST_SORT_DIRECTION_DEFAULT,
-  LIST_OF_FIELDS_AND_SORT_FIELDS
+  FALSE_STRING,
+  LIST_OF_FIELDS_AND_SORT_FIELDS,
+  TRUE_STRING
 } from '~/constants';
 import { DataListSortDirection, Nullable } from '~/interfaces';
 
@@ -18,6 +20,18 @@ export const getIds = (categoryIds?: string | string[]) => {
   }
 
   return [];
+};
+
+export const getBoolean = (value?: any) => {
+  if (value === TRUE_STRING) {
+    return true;
+  }
+
+  if (value === FALSE_STRING) {
+    return false;
+  }
+
+  return undefined;
 };
 
 export const getLimit = (limit?: number): number => {

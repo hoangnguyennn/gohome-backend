@@ -1,5 +1,6 @@
 import { AggregateOptions } from 'mongodb';
 import { PipelineStage } from 'mongoose';
+import { DATA_TYPES } from '~/constants';
 import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
@@ -13,6 +14,7 @@ import Category from '~/models/category.model';
 import Post from '~/models/post.model';
 import Ward from '~/models/ward.model';
 import {
+  getBoolean,
   getIds,
   getLimit,
   getObjectId,
@@ -39,6 +41,7 @@ const PostService = {
     const categoryIds = getIds(dataListFilter.categoryIds);
     const locationIds = getIds(dataListFilter.locationIds);
     const ownerPhone = getValue(dataListFilter.ownerPhone);
+    const isHide = getBoolean(dataListFilter.isHide);
 
     let pipelineState: PipelineStage[] = [];
     const pipelineStateCount: PipelineStage[] = [];
@@ -146,6 +149,11 @@ const PostService = {
       pipelineStateCount.push({
         $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
       });
+    }
+
+    if (typeof isHide === DATA_TYPES.BOOLEAN) {
+      pipelineState.push({ $match: { isHide } });
+      pipelineStateCount.push({ $match: { isHide } });
     }
 
     if (sortBy && sortDirection) {
@@ -268,6 +276,7 @@ const PostService = {
     const categoryIds = getIds(dataListFilter.categoryIds);
     const locationIds = getIds(dataListFilter.locationIds);
     const ownerPhone = getValue(dataListFilter.ownerPhone);
+    const isHide = getBoolean(dataListFilter.isHide);
 
     let pipelineState: PipelineStage[] = [];
     const pipelineStateCount: PipelineStage[] = [];
@@ -375,6 +384,11 @@ const PostService = {
       pipelineStateCount.push({
         $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
       });
+    }
+
+    if (typeof isHide === DATA_TYPES.BOOLEAN) {
+      pipelineState.push({ $match: { isHide } });
+      pipelineStateCount.push({ $match: { isHide } });
     }
 
     if (sortBy && sortDirection) {
