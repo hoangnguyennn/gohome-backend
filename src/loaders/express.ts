@@ -1,6 +1,7 @@
 import { Application, json, urlencoded } from 'express';
-import morgan from 'morgan';
+import { errors } from 'celebrate';
 import cors from 'cors';
+import morgan from 'morgan';
 import apiRoutes from '~/apis/routes';
 import env from '~/configs/env';
 import errorHandler from '~/helpers/errorHandler';
@@ -15,6 +16,8 @@ export default async ({ app }: { app: Application }) => {
 
   // load routes
   app.use(env.apiPrefix, apiRoutes);
+
+  app.use(errors());
 
   // 404 route
   app.use(notFound);

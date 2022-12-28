@@ -10,7 +10,7 @@ const startServer = async () => {
   await loaders({ app });
 
   app.listen(port, () => {
-    console.log(`Server: http://localhost:${port}/`);
+    console.log(`Server: http://localhost:${port}`);
   });
 };
 

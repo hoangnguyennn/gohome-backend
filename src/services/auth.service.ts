@@ -2,6 +2,7 @@ import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import { HttpError, HTTP_STATUS } from '~/helpers/commonResponse';
 import User from '~/models/user.model';
 import bcryptUtil from '~/utils/bcrypt.util';
+import { isObjectId } from '~/utils/common.util';
 import tokenUtil from '~/utils/token.util';
 
 const AuthService = {
@@ -39,6 +40,10 @@ const AuthService = {
     return { token };
   },
   me: async (userId: string) => {
+    if (!isObjectId(userId)) {
+      throw new HttpError(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+    }
+
     const user = await User.findById(userId).exec();
 
     if (!user) {

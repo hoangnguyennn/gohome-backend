@@ -4,18 +4,21 @@ import { checkValidObjectId } from '~/middlewares/objectId.middleware';
 import WardController from '~/apis/controllers/ward.controller';
 
 const router = Router();
-router
-  .get('/', catcherWrapper(WardController.getList))
-  .post('/', catcherWrapper(WardController.create))
-  .get(
-    '/:id',
-    catcherWrapper(checkValidObjectId),
-    catcherWrapper(WardController.getById)
-  )
-  .put(
-    '/:id',
-    catcherWrapper(checkValidObjectId),
-    catcherWrapper(WardController.updateById)
-  );
+
+router.get('/', catcherWrapper(WardController.getList));
+
+router.post('/', catcherWrapper(WardController.create));
+
+router.get(
+  '/:id',
+  catcherWrapper(checkValidObjectId),
+  catcherWrapper(WardController.getById)
+);
+
+router.put(
+  '/:id',
+  catcherWrapper(checkValidObjectId),
+  catcherWrapper(WardController.updateById)
+);
 
 export default router;

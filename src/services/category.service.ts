@@ -1,5 +1,6 @@
 import { AggregateOptions } from 'mongodb';
 import { PipelineStage } from 'mongoose';
+import { ERROR_MESSAGES } from '~/constants/errorMessages';
 import {
   COMMON_MESSAGE,
   HttpError,
@@ -85,7 +86,19 @@ const CategoryService = {
 
     return category;
   },
-  create: (category: ICategoryRequest) => {
+  create: async (category: ICategoryRequest) => {
+    const [existCategoryByName, existCategoryByCode] = await Promise.all([
+      Category.findOne({ name: category.name }),
+      Category.findOne({ code: category.code })
+    ]);
+
+    if (existCategoryByName || existCategoryByCode) {
+      throw new HttpError(
+        ERROR_MESSAGES.CATEGORY_EXIST,
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
     return Category.create(category);
   },
   updateById: async (id: string, categoryUpdate: ICategoryRequest) => {

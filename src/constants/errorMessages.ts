@@ -7,5 +7,6 @@ export const ERROR_MESSAGES = {
   USER_ALREADY_EXIST: 'Người dùng đã tồn tại',
   USER_NOT_FOUND: 'Không tìm thấy người dùng',
   USER_VERIFIED_BEFORE: 'Người dùng đã được xác thực trước đó',
-  WARD_NOT_FOUND: 'Không tìm thấy xã, phường'
+  WARD_NOT_FOUND: 'Không tìm thấy xã, phường',
+  CATEGORY_EXIST: 'Loại nhà đất đã tồn tại'
 };
