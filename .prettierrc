@@ -3,5 +3,7 @@
   "useTabs": false,
   "tabWidth": 2,
   "arrowParens": "avoid",
-  "trailingComma": "none"
+  "trailingComma": "none",
+  "semi": false,
+  "endOfLine": "lf"
 }

@@ -1,4 +1,4 @@
-import { SchemaOptions, Segments, Joi } from 'celebrate';
+import { SchemaOptions, Segments, Joi } from 'celebrate'
 
 export const POST_CREATION_RULES: SchemaOptions = {
   [Segments.BODY]: Joi.object().keys({
@@ -20,7 +20,7 @@ export const POST_CREATION_RULES: SchemaOptions = {
     isRented: Joi.boolean(),
     imagesId: Joi.array().items(Joi.string().required())
   })
-};
+}
 
 export const POST_UPDATE_RULES: SchemaOptions = {
   [Segments.BODY]: Joi.object().keys({
@@ -42,4 +42,4 @@ export const POST_UPDATE_RULES: SchemaOptions = {
     isRented: Joi.boolean(),
     imagesId: Joi.array().items(Joi.string().required())
   })
-};
+}

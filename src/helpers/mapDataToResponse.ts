@@ -5,7 +5,7 @@ import {
   IPostResponse,
   IUserResponse,
   IWardResponse
-} from '~/interfaces';
+} from '~/interfaces'
 import {
   ICategory,
   IDistrict,
@@ -13,7 +13,7 @@ import {
   IPost,
   IUser,
   IWard
-} from '~/interfaces/IDocument';
+} from '~/interfaces/IDocument'
 
 export const mapUserToResponse = (user: IUser) => {
   return {
@@ -26,8 +26,8 @@ export const mapUserToResponse = (user: IUser) => {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     isVerified: user.isVerified
-  } as IUserResponse;
-};
+  } as IUserResponse
+}
 
 export const mapDistrictToResponse = (district: IDistrict) => {
   return {
@@ -37,8 +37,8 @@ export const mapDistrictToResponse = (district: IDistrict) => {
     isHide: district.isHide,
     createdAt: district.createdAt,
     updatedAt: district.updatedAt
-  } as IDistrictResponse;
-};
+  } as IDistrictResponse
+}
 
 export const mapWardToResponse = (ward: IWard) => {
   return {
@@ -49,8 +49,8 @@ export const mapWardToResponse = (ward: IWard) => {
     isHide: ward.isHide,
     createdAt: ward.createdAt,
     updatedAt: ward.updatedAt
-  } as IWardResponse;
-};
+  } as IWardResponse
+}
 
 export const mapCategoryToResponse = (category: ICategory) => {
   return {
@@ -60,8 +60,8 @@ export const mapCategoryToResponse = (category: ICategory) => {
     isHide: category.isHide,
     createdAt: category.createdAt,
     updatedAt: category.updatedAt
-  } as ICategoryResponse;
-};
+  } as ICategoryResponse
+}
 
 export const mapPostToResponse = (post: IPost) => {
   return {
@@ -94,8 +94,8 @@ export const mapPostToResponse = (post: IPost) => {
     createdBy: post.createdBy && mapUserToResponse(post.createdBy),
     updatedBy: post.updatedBy && mapUserToResponse(post.updatedBy),
     images: post.images && post.images.map(mapImageToResponse)
-  } as IPostResponse;
-};
+  } as IPostResponse
+}
 
 export const mapImageToResponse = (image: IImage) => {
   return {
@@ -104,5 +104,5 @@ export const mapImageToResponse = (image: IImage) => {
     isHide: image.isHide,
     createdAt: image.createdAt,
     updatedAt: image.updatedAt
-  } as IImageResponse;
-};
+  } as IImageResponse
+}

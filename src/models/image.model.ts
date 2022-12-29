@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
-import { CollectionNames } from '~/interfaces/enums';
-import { IImage } from '~/interfaces/IDocument';
+import { Schema, model } from 'mongoose'
+import { CollectionNames } from '~/interfaces/enums'
+import { IImage } from '~/interfaces/IDocument'
 
 const imageSchema = new Schema<IImage>(
   {
@@ -16,6 +16,6 @@ const imageSchema = new Schema<IImage>(
       updatedAt: 'updatedAt'
     }
   }
-);
+)
 
-export default model<IImage>(CollectionNames.IMAGE, imageSchema);
+export default model<IImage>(CollectionNames.IMAGE, imageSchema)
