@@ -1,8 +1,8 @@
-import { DistrictTypes } from '~/interfaces/enums';
-import mongoose from '~/loaders/mongoose';
-import categoryModel from '~/models/category.model';
-import districtModel from '~/models/district.model';
-import wardModel from '~/models/ward.model';
+import { DistrictTypes } from '~/interfaces/enums'
+import mongoose from '~/loaders/mongoose'
+import categoryModel from '~/models/category.model'
+import districtModel from '~/models/district.model'
+import wardModel from '~/models/ward.model'
 
 const categories = [
   { name: 'Căn hộ', code: 'CH' },
@@ -14,7 +14,7 @@ const categories = [
   { name: 'Mặt bằng chung chủ', code: 'MBC' },
   { name: 'Mặt bằng riêng biệt', code: 'MBR' },
   { name: 'Kho xưởng', code: 'KX' }
-];
+]
 
 const districts = [
   { name: 'Nha Trang', type: DistrictTypes.THANH_PHO },
@@ -26,7 +26,7 @@ const districts = [
   { name: 'Khánh Vĩnh', type: DistrictTypes.HUYEN },
   { name: 'Cam Lâm', type: DistrictTypes.HUYEN },
   { name: 'Trường Sa', type: DistrictTypes.HUYEN }
-];
+]
 
 const wards = [
   {
@@ -340,22 +340,22 @@ const wards = [
   },
   { name: 'Song Tử Tây', type: 'Xã', district: 'Trường Sa' },
   { name: 'Sinh Tồn', type: 'Xã', district: 'Trường Sa' }
-];
+]
 
 const init = async () => {
-  console.log('connect to db');
-  await mongoose();
-  console.log('db connected');
+  console.log('connect to db')
+  await mongoose()
+  console.log('db connected')
 
-  console.log('create categories');
-  await categoryModel.create(categories);
-  console.log('create categories done');
+  console.log('create categories')
+  await categoryModel.create(categories)
+  console.log('create categories done')
 
-  console.log('create districts');
-  const districtsCreated = await districtModel.create(districts);
-  console.log('create districts done');
+  console.log('create districts')
+  const districtsCreated = await districtModel.create(districts)
+  console.log('create districts done')
 
-  console.log('create wards');
+  console.log('create wards')
   const newWards = wards.map(ward => {
     return {
       name: ward.name,
@@ -363,12 +363,12 @@ const init = async () => {
       districtId: districtsCreated.find(
         district => district.name === ward.district
       )?._id
-    };
-  });
-  await wardModel.create(newWards);
-  console.log('create wards done');
+    }
+  })
+  await wardModel.create(newWards)
+  console.log('create wards done')
 
-  process.exit();
-};
+  process.exit()
+}
 
-init();
+init()

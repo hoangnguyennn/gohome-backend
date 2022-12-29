@@ -1,8 +1,8 @@
-import { Schema, model } from 'mongoose';
-import { CollectionNames, PostVerifyStatuses } from '~/interfaces/enums';
-import { IPost } from '~/interfaces/IDocument';
-import { getPostCode, getSlug } from '~/utils/converter';
-import Category from './category.model';
+import { Schema, model } from 'mongoose'
+import { CollectionNames, PostVerifyStatuses } from '~/interfaces/enums'
+import { IPost } from '~/interfaces/IDocument'
+import { getPostCode, getSlug } from '~/utils/converter'
+import Category from './category.model'
 
 const postSchema = new Schema<IPost>(
   {
@@ -40,60 +40,60 @@ const postSchema = new Schema<IPost>(
       updatedAt: 'updatedAt'
     }
   }
-);
+)
 
-postSchema.index({ title: 'text' });
+postSchema.index({ title: 'text' })
 
 postSchema.virtual('category', {
   ref: CollectionNames.CATEGORY,
   localField: 'categoryId',
   foreignField: '_id',
   justOne: true
-});
+})
 
 postSchema.virtual('ward', {
   ref: CollectionNames.WARD,
   localField: 'wardId',
   foreignField: '_id',
   justOne: true
-});
+})
 
 postSchema.virtual('createdBy', {
   ref: CollectionNames.USER,
   localField: 'createdById',
   foreignField: '_id',
   justOne: true
-});
+})
 
 postSchema.virtual('updatedBy', {
   ref: CollectionNames.USER,
   localField: 'updatedById',
   foreignField: '_id',
   justOne: true
-});
+})
 
 postSchema.virtual('images', {
   ref: CollectionNames.IMAGE,
   localField: 'imagesId',
   foreignField: '_id',
   justOne: false
-});
+})
 
 postSchema.pre('validate', async function (next) {
-  this.slug = getSlug(this.title);
+  this.slug = getSlug(this.title)
 
-  const category = await Category.findById(this.categoryId).exec();
+  const category = await Category.findById(this.categoryId).exec()
 
   if (!category) {
-    return next();
+    return next()
   }
 
-  this.code = getPostCode(category);
-  next();
-});
+  this.code = getPostCode(category)
+  next()
+})
 
 postSchema.post('save', function () {
-  Category.findByIdAndUpdate(this.categoryId, { $inc: { count: 1 } });
-});
+  Category.findByIdAndUpdate(this.categoryId, { $inc: { count: 1 } })
+})
 
-export default model<IPost>(CollectionNames.POST, postSchema);
+export default model<IPost>(CollectionNames.POST, postSchema)

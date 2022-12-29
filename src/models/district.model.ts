@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
-import { CollectionNames, DistrictTypes } from '~/interfaces/enums';
-import { IDistrict } from '~/interfaces/IDocument';
+import { Schema, model } from 'mongoose'
+import { CollectionNames, DistrictTypes } from '~/interfaces/enums'
+import { IDistrict } from '~/interfaces/IDocument'
 
 const districtSchema = new Schema<IDistrict>(
   {
@@ -15,8 +15,8 @@ const districtSchema = new Schema<IDistrict>(
       updatedAt: 'updatedAt'
     }
   }
-);
+)
 
-districtSchema.index({ name: 'text' });
+districtSchema.index({ name: 'text' })
 
-export default model<IDistrict>(CollectionNames.DISTRICT, districtSchema);
+export default model<IDistrict>(CollectionNames.DISTRICT, districtSchema)

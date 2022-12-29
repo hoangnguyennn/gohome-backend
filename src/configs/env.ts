@@ -1,8 +1,8 @@
-import { config } from 'dotenv';
+import { config } from 'dotenv'
 
-const envFound = config();
+const envFound = config()
 if (!envFound) {
-  throw new Error("Couldn't find .env file");
+  throw new Error("Couldn't find .env file")
 }
 
 export default {
@@ -15,4 +15,4 @@ export default {
   cloudinaryName: String(process.env.CLOUDINARY_NAME),
   cloudinaryKey: String(process.env.CLOUDINARY_KEY),
   cloudinarySecret: String(process.env.CLOUDINARY_SECRET)
-};
+}

@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
-import { CollectionNames } from '~/interfaces/enums';
-import { ICategory } from '~/interfaces/IDocument';
+import { Schema, model } from 'mongoose'
+import { CollectionNames } from '~/interfaces/enums'
+import { ICategory } from '~/interfaces/IDocument'
 
 const categorySchema = new Schema<ICategory>(
   {
@@ -16,8 +16,8 @@ const categorySchema = new Schema<ICategory>(
       updatedAt: 'updatedAt'
     }
   }
-);
+)
 
-categorySchema.index({ name: 'text' });
+categorySchema.index({ name: 'text' })
 
-export default model<ICategory>(CollectionNames.CATEGORY, categorySchema);
+export default model<ICategory>(CollectionNames.CATEGORY, categorySchema)

@@ -1,18 +1,19 @@
-import { AggregateOptions } from 'mongodb';
-import { PipelineStage } from 'mongoose';
-import { DATA_TYPES } from '~/constants';
-import { ERROR_MESSAGES } from '~/constants/errorMessages';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { PipelineStage } from 'mongoose'
+import { DATA_TYPES } from '~/constants'
+import { ERROR_MESSAGES } from '~/constants/errorMessages'
 import {
   COMMON_MESSAGE,
   HttpError,
   HTTP_STATUS
-} from '~/helpers/commonResponse';
-import { IPostCreate, IPostFilter, IPostUpdate } from '~/interfaces';
-import { CollectionNames, PostVerifyStatuses } from '~/interfaces/enums';
-import { IPost } from '~/interfaces/IDocument';
-import Category from '~/models/category.model';
-import Post from '~/models/post.model';
-import Ward from '~/models/ward.model';
+} from '~/helpers/commonResponse'
+import { IPostCreate, IPostFilter, IPostUpdate } from '~/interfaces'
+import { CollectionNames, PostVerifyStatuses } from '~/interfaces/enums'
+import { IPost } from '~/interfaces/IDocument'
+import Category from '~/models/category.model'
+import Post from '~/models/post.model'
+import Ward from '~/models/ward.model'
 import {
   getBoolean,
   getIds,
@@ -22,30 +23,29 @@ import {
   getSortBy,
   getSortDirection,
   getValue
-} from '~/utils/getter.util';
+} from '~/utils/getter.util'
 
 const PostService = {
   getList: async (dataListFilter: IPostFilter) => {
-    const limit = getLimit(dataListFilter.limit);
-    const offset = getOffset(dataListFilter.offset);
-    const sortBy = getSortBy(dataListFilter.sortBy);
-    const sortDirection = getSortDirection(dataListFilter.sortDirection);
-    const code = getValue(dataListFilter.code);
-    const title = getValue(dataListFilter.title);
-    const createdById = getObjectId(dataListFilter.createdById);
-    const verifyStatus = getValue(Number(dataListFilter.verifyStatus));
-    const createdAtStart = getValue(dataListFilter.createdAtStart);
-    const createdAtEnd = getValue(dataListFilter.createdAtEnd);
-    const updatedAtStart = getValue(dataListFilter.updatedAtStart);
-    const updatedAtEnd = getValue(dataListFilter.updatedAtEnd);
-    const categoryIds = getIds(dataListFilter.categoryIds);
-    const locationIds = getIds(dataListFilter.locationIds);
-    const ownerPhone = getValue(dataListFilter.ownerPhone);
-    const isHide = getBoolean(dataListFilter.isHide);
+    const limit = getLimit(dataListFilter.limit)
+    const offset = getOffset(dataListFilter.offset)
+    const sortBy = getSortBy(dataListFilter.sortBy)
+    const sortDirection = getSortDirection(dataListFilter.sortDirection)
+    const code = getValue(dataListFilter.code)
+    const title = getValue(dataListFilter.title)
+    const createdById = getObjectId(dataListFilter.createdById)
+    const verifyStatus = getValue(Number(dataListFilter.verifyStatus))
+    const createdAtStart = getValue(dataListFilter.createdAtStart)
+    const createdAtEnd = getValue(dataListFilter.createdAtEnd)
+    const updatedAtStart = getValue(dataListFilter.updatedAtStart)
+    const updatedAtEnd = getValue(dataListFilter.updatedAtEnd)
+    const categoryIds = getIds(dataListFilter.categoryIds)
+    const locationIds = getIds(dataListFilter.locationIds)
+    const ownerPhone = getValue(dataListFilter.ownerPhone)
+    const isHide = getBoolean(dataListFilter.isHide)
 
-    let pipelineState: PipelineStage[] = [];
-    const pipelineStateCount: PipelineStage[] = [];
-    const aggregateOptions: AggregateOptions = { collation: { locale: 'vi' } };
+    let pipelineState: PipelineStage[] = []
+    const pipelineStateCount: PipelineStage[] = []
 
     if (title) {
       pipelineState.push({
@@ -55,7 +55,7 @@ const PostService = {
             { title: { $regex: new RegExp(title, 'i') } }
           ]
         }
-      });
+      })
       pipelineStateCount.push({
         $match: {
           $or: [
@@ -63,97 +63,97 @@ const PostService = {
             { title: { $regex: new RegExp(title, 'i') } }
           ]
         }
-      });
+      })
     }
 
-    pipelineState.push({ $match: { isRented: false } });
-    pipelineStateCount.push({ $match: { isRented: false } });
+    pipelineState.push({ $match: { isRented: false } })
+    pipelineStateCount.push({ $match: { isRented: false } })
 
     if (code) {
       pipelineState.push({
         $match: { code: { $regex: new RegExp(`^${code}$`, 'i') } }
-      });
+      })
       pipelineStateCount.push({
         $match: { code: { $regex: new RegExp(`^${code}$`, 'i') } }
-      });
+      })
     }
 
     if (createdById) {
-      pipelineState.push({ $match: { createdById } });
-      pipelineStateCount.push({ $match: { createdById } });
+      pipelineState.push({ $match: { createdById } })
+      pipelineStateCount.push({ $match: { createdById } })
     }
 
     if (verifyStatus in PostVerifyStatuses) {
-      pipelineState.push({ $match: { verifyStatus } });
-      pipelineStateCount.push({ $match: { verifyStatus } });
+      pipelineState.push({ $match: { verifyStatus } })
+      pipelineStateCount.push({ $match: { verifyStatus } })
     }
 
     if (createdAtStart) {
       pipelineState.push({
         $match: { createdAt: { $gte: new Date(createdAtStart) } }
-      });
+      })
       pipelineStateCount.push({
         $match: { createdAt: { $gte: new Date(createdAtStart) } }
-      });
+      })
     }
 
     if (createdAtEnd) {
       pipelineState.push({
         $match: { createdAt: { $lte: new Date(createdAtEnd) } }
-      });
+      })
       pipelineStateCount.push({
         $match: { createdAt: { $lte: new Date(createdAtEnd) } }
-      });
+      })
     }
 
     if (updatedAtStart) {
       pipelineState.push({
         $match: { updatedAt: { $lte: new Date(updatedAtStart) } }
-      });
+      })
       pipelineStateCount.push({
         $match: { updatedAt: { $lte: new Date(updatedAtStart) } }
-      });
+      })
     }
 
     if (updatedAtEnd) {
       pipelineState.push({
         $match: { updatedAt: { $lte: new Date(updatedAtEnd) } }
-      });
+      })
       pipelineStateCount.push({
         $match: { updatedAt: { $lte: new Date(updatedAtEnd) } }
-      });
+      })
     }
 
     if (categoryIds.length) {
       pipelineState.push({
         $match: { categoryId: { $in: categoryIds } }
-      });
+      })
       pipelineStateCount.push({
         $match: { categoryId: { $in: categoryIds } }
-      });
+      })
     }
 
     if (locationIds.length) {
       pipelineState.push({
         $match: { wardId: { $in: locationIds } }
-      });
+      })
       pipelineStateCount.push({
         $match: { wardId: { $in: locationIds } }
-      });
+      })
     }
 
     if (ownerPhone) {
       pipelineState.push({
         $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
-      });
+      })
       pipelineStateCount.push({
         $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
-      });
+      })
     }
 
     if (typeof isHide === DATA_TYPES.BOOLEAN) {
-      pipelineState.push({ $match: { isHide } });
-      pipelineStateCount.push({ $match: { isHide } });
+      pipelineState.push({ $match: { isHide } })
+      pipelineStateCount.push({ $match: { isHide } })
     }
 
     pipelineState = pipelineState.concat([
@@ -171,18 +171,18 @@ const PostService = {
           preserveNullAndEmptyArrays: true
         }
       }
-    ]);
+    ])
 
     if (sortBy && sortDirection) {
-      pipelineState.push({ $sort: { [sortBy]: sortDirection } });
+      pipelineState.push({ $sort: { [sortBy]: sortDirection } })
     }
 
     if (offset) {
-      pipelineState.push({ $skip: offset });
+      pipelineState.push({ $skip: offset })
     }
 
     if (limit) {
-      pipelineState.push({ $limit: limit });
+      pipelineState.push({ $limit: limit })
     }
 
     pipelineState = pipelineState.concat([
@@ -250,40 +250,39 @@ const PostService = {
           preserveNullAndEmptyArrays: true
         }
       }
-    ]);
+    ])
 
-    pipelineStateCount.push({ $count: 'total' });
+    pipelineStateCount.push({ $count: 'total' })
 
     const [posts, count] = await Promise.all([
       pipelineState.length
-        ? Post.aggregate(pipelineState, aggregateOptions).exec()
+        ? Post.aggregate(pipelineState, { collation: { locale: 'vi' } }).exec()
         : Post.find().exec(),
       Post.aggregate(pipelineStateCount).exec()
-    ]);
+    ])
 
-    return { data: posts as IPost[], total: count[0]?.total || 0 };
+    return { data: posts as IPost[], total: count[0]?.total || 0 }
   },
   getRentedList: async (dataListFilter: IPostFilter) => {
-    const limit = getLimit(dataListFilter.limit);
-    const offset = getOffset(dataListFilter.offset);
-    const sortBy = getSortBy(dataListFilter.sortBy);
-    const sortDirection = getSortDirection(dataListFilter.sortDirection);
-    const code = getValue(dataListFilter.code);
-    const title = getValue(dataListFilter.title);
-    const createdById = getObjectId(dataListFilter.createdById);
-    const verifyStatus = getValue(Number(dataListFilter.verifyStatus));
-    const createdAtStart = getValue(dataListFilter.createdAtStart);
-    const createdAtEnd = getValue(dataListFilter.createdAtEnd);
-    const updatedAtStart = getValue(dataListFilter.updatedAtStart);
-    const updatedAtEnd = getValue(dataListFilter.updatedAtEnd);
-    const categoryIds = getIds(dataListFilter.categoryIds);
-    const locationIds = getIds(dataListFilter.locationIds);
-    const ownerPhone = getValue(dataListFilter.ownerPhone);
-    const isHide = getBoolean(dataListFilter.isHide);
+    const limit = getLimit(dataListFilter.limit)
+    const offset = getOffset(dataListFilter.offset)
+    const sortBy = getSortBy(dataListFilter.sortBy)
+    const sortDirection = getSortDirection(dataListFilter.sortDirection)
+    const code = getValue(dataListFilter.code)
+    const title = getValue(dataListFilter.title)
+    const createdById = getObjectId(dataListFilter.createdById)
+    const verifyStatus = getValue(Number(dataListFilter.verifyStatus))
+    const createdAtStart = getValue(dataListFilter.createdAtStart)
+    const createdAtEnd = getValue(dataListFilter.createdAtEnd)
+    const updatedAtStart = getValue(dataListFilter.updatedAtStart)
+    const updatedAtEnd = getValue(dataListFilter.updatedAtEnd)
+    const categoryIds = getIds(dataListFilter.categoryIds)
+    const locationIds = getIds(dataListFilter.locationIds)
+    const ownerPhone = getValue(dataListFilter.ownerPhone)
+    const isHide = getBoolean(dataListFilter.isHide)
 
-    let pipelineState: PipelineStage[] = [];
-    const pipelineStateCount: PipelineStage[] = [];
-    const aggregateOptions: AggregateOptions = { collation: { locale: 'vi' } };
+    let pipelineState: PipelineStage[] = []
+    const pipelineStateCount: PipelineStage[] = []
 
     if (title) {
       pipelineState.push({
@@ -293,7 +292,7 @@ const PostService = {
             { title: { $regex: new RegExp(title, 'i') } }
           ]
         }
-      });
+      })
       pipelineStateCount.push({
         $match: {
           $or: [
@@ -301,97 +300,97 @@ const PostService = {
             { title: { $regex: new RegExp(title, 'i') } }
           ]
         }
-      });
+      })
     }
 
-    pipelineState.push({ $match: { isRented: true } });
-    pipelineStateCount.push({ $match: { isRented: true } });
+    pipelineState.push({ $match: { isRented: true } })
+    pipelineStateCount.push({ $match: { isRented: true } })
 
     if (code) {
       pipelineState.push({
         $match: { code: { $regex: new RegExp(`^${code}$`, 'i') } }
-      });
+      })
       pipelineStateCount.push({
         $match: { code: { $regex: new RegExp(`^${code}$`, 'i') } }
-      });
+      })
     }
 
     if (createdById) {
-      pipelineState.push({ $match: { createdById } });
-      pipelineStateCount.push({ $match: { createdById } });
+      pipelineState.push({ $match: { createdById } })
+      pipelineStateCount.push({ $match: { createdById } })
     }
 
     if (verifyStatus in PostVerifyStatuses) {
-      pipelineState.push({ $match: { verifyStatus } });
-      pipelineStateCount.push({ $match: { verifyStatus } });
+      pipelineState.push({ $match: { verifyStatus } })
+      pipelineStateCount.push({ $match: { verifyStatus } })
     }
 
     if (createdAtStart) {
       pipelineState.push({
         $match: { createdAt: { $gte: new Date(createdAtStart) } }
-      });
+      })
       pipelineStateCount.push({
         $match: { createdAt: { $gte: new Date(createdAtStart) } }
-      });
+      })
     }
 
     if (createdAtEnd) {
       pipelineState.push({
         $match: { createdAt: { $lte: new Date(createdAtEnd) } }
-      });
+      })
       pipelineStateCount.push({
         $match: { createdAt: { $lte: new Date(createdAtEnd) } }
-      });
+      })
     }
 
     if (updatedAtStart) {
       pipelineState.push({
         $match: { updatedAt: { $lte: new Date(updatedAtStart) } }
-      });
+      })
       pipelineStateCount.push({
         $match: { updatedAt: { $lte: new Date(updatedAtStart) } }
-      });
+      })
     }
 
     if (updatedAtEnd) {
       pipelineState.push({
         $match: { updatedAt: { $lte: new Date(updatedAtEnd) } }
-      });
+      })
       pipelineStateCount.push({
         $match: { updatedAt: { $lte: new Date(updatedAtEnd) } }
-      });
+      })
     }
 
     if (categoryIds.length) {
       pipelineState.push({
         $match: { categoryId: { $in: categoryIds } }
-      });
+      })
       pipelineStateCount.push({
         $match: { categoryId: { $in: categoryIds } }
-      });
+      })
     }
 
     if (locationIds.length) {
       pipelineState.push({
         $match: { wardId: { $in: locationIds } }
-      });
+      })
       pipelineStateCount.push({
         $match: { wardId: { $in: locationIds } }
-      });
+      })
     }
 
     if (ownerPhone) {
       pipelineState.push({
         $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
-      });
+      })
       pipelineStateCount.push({
         $match: { ownerPhone: { $regex: new RegExp(ownerPhone, 'i') } }
-      });
+      })
     }
 
     if (typeof isHide === DATA_TYPES.BOOLEAN) {
-      pipelineState.push({ $match: { isHide } });
-      pipelineStateCount.push({ $match: { isHide } });
+      pipelineState.push({ $match: { isHide } })
+      pipelineStateCount.push({ $match: { isHide } })
     }
 
     pipelineState = pipelineState.concat([
@@ -409,18 +408,18 @@ const PostService = {
           preserveNullAndEmptyArrays: true
         }
       }
-    ]);
+    ])
 
     if (sortBy && sortDirection) {
-      pipelineState.push({ $sort: { [sortBy]: sortDirection } });
+      pipelineState.push({ $sort: { [sortBy]: sortDirection } })
     }
 
     if (offset) {
-      pipelineState.push({ $skip: offset });
+      pipelineState.push({ $skip: offset })
     }
 
     if (limit) {
-      pipelineState.push({ $limit: limit });
+      pipelineState.push({ $limit: limit })
     }
 
     pipelineState = pipelineState.concat([
@@ -488,18 +487,18 @@ const PostService = {
           preserveNullAndEmptyArrays: true
         }
       }
-    ]);
+    ])
 
-    pipelineStateCount.push({ $count: 'total' });
+    pipelineStateCount.push({ $count: 'total' })
 
     const [posts, count] = await Promise.all([
       pipelineState.length
-        ? Post.aggregate(pipelineState, aggregateOptions).exec()
+        ? Post.aggregate(pipelineState, { collation: { locale: 'vi' } }).exec()
         : Post.find().exec(),
       Post.aggregate(pipelineStateCount).exec() as Promise<[{ total: number }]>
-    ]);
+    ])
 
-    return { data: posts as IPost[], total: count[0]?.total || 0 };
+    return { data: posts as IPost[], total: count[0]?.total || 0 }
   },
   getById: async (id: string) => {
     const post = await Post.findById(id)
@@ -508,51 +507,51 @@ const PostService = {
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
-      .exec();
+      .exec()
 
     if (!post) {
-      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
-    return post;
+    return post
   },
   create: async (post: IPostCreate) => {
-    const category = await Category.findById(post.categoryId).exec();
+    const category = await Category.findById(post.categoryId).exec()
 
     if (!category) {
       throw new HttpError(
         ERROR_MESSAGES.CATEGORY_NOT_FOUND,
         HTTP_STATUS.NOT_FOUND
-      );
+      )
     }
 
-    const ward = await Ward.findById(post.wardId).exec();
+    const ward = await Ward.findById(post.wardId).exec()
 
     if (!ward) {
-      throw new HttpError(ERROR_MESSAGES.WARD_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(ERROR_MESSAGES.WARD_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
-    const newPost = await Post.create(post);
+    const newPost = await Post.create(post)
     return Post.findById(newPost._id)
       .populate('category')
       .populate({ path: 'ward', populate: 'district' })
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
-      .exec() as Promise<IPost>;
+      .exec() as Promise<IPost>
   },
   approve: async (id: string, updatedById: string) => {
-    const post = await Post.findById(id).exec();
+    const post = await Post.findById(id).exec()
 
     if (!post) {
-      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
     if (post.verifyStatus === PostVerifyStatuses.APPROVED) {
       throw new HttpError(
         ERROR_MESSAGES.POST_APPROVED_BEFORE,
         HTTP_STATUS.BAD_REQUEST
-      );
+      )
     }
 
     return Post.findByIdAndUpdate(
@@ -571,20 +570,20 @@ const PostService = {
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
-      .exec() as Promise<IPost>;
+      .exec() as Promise<IPost>
   },
   deny: async (id: string, reason: string, updatedById: string) => {
-    const post = await Post.findById(id).exec();
+    const post = await Post.findById(id).exec()
 
     if (!post) {
-      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
     if (post.verifyStatus === PostVerifyStatuses.DENIED) {
       throw new HttpError(
         ERROR_MESSAGES.POST_DENIED_BEFORE,
         HTTP_STATUS.BAD_REQUEST
-      );
+      )
     }
 
     return Post.findByIdAndUpdate(
@@ -603,13 +602,13 @@ const PostService = {
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
-      .exec() as Promise<IPost>;
+      .exec() as Promise<IPost>
   },
   markAsRented: async (id: string, updatedById: string) => {
-    const post = await Post.findById(id).exec();
+    const post = await Post.findById(id).exec()
 
     if (!post) {
-      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
     return Post.findByIdAndUpdate(
@@ -622,36 +621,36 @@ const PostService = {
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
-      .exec() as Promise<IPost>;
+      .exec() as Promise<IPost>
   },
   updateById: async (id: string, postUpdate: IPostUpdate) => {
-    const post = await Post.findById(id).exec();
+    const post = await Post.findById(id).exec()
 
     if (!post) {
-      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(COMMON_MESSAGE.NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
-    const category = await Category.findById(post.categoryId).exec();
+    const category = await Category.findById(post.categoryId).exec()
 
     if (!category) {
       throw new HttpError(
         ERROR_MESSAGES.CATEGORY_NOT_FOUND,
         HTTP_STATUS.NOT_FOUND
-      );
+      )
     }
 
-    const ward = await Ward.findById(post.wardId).exec();
+    const ward = await Ward.findById(post.wardId).exec()
 
     if (!ward) {
-      throw new HttpError(ERROR_MESSAGES.WARD_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+      throw new HttpError(ERROR_MESSAGES.WARD_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
-    const postParams: any = postUpdate;
+    const postParams: any = postUpdate
     if (post.isRented !== postUpdate.isRented) {
       if (postUpdate.isRented) {
-        postParams.rentedAt = Date.now;
+        postParams.rentedAt = Date.now
       } else {
-        postParams.openedForRentAt = Date.now;
+        postParams.openedForRentAt = Date.now
       }
     }
 
@@ -661,8 +660,8 @@ const PostService = {
       .populate('createdBy')
       .populate('updatedBy')
       .populate('images')
-      .exec() as Promise<IPost>;
+      .exec() as Promise<IPost>
   }
-};
+}
 
-export default PostService;
+export default PostService

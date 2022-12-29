@@ -1,4 +1,4 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response } from 'express'
 
 export enum HTTP_STATUS {
   OK = 200,
@@ -21,28 +21,28 @@ export enum COMMON_MESSAGE {
 }
 
 export class HttpError extends Error {
-  statusCode: HTTP_STATUS;
+  statusCode: HTTP_STATUS
 
   constructor(message: string, statusCode: HTTP_STATUS) {
-    super(message);
-    this.statusCode = statusCode;
+    super(message)
+    this.statusCode = statusCode
   }
 }
 
 export const success = <T>(res: Response, data?: T) => {
-  return res.status(HTTP_STATUS.OK).json(data);
-};
+  return res.status(HTTP_STATUS.OK).json(data)
+}
 
 export const unauthorized = (
   next: NextFunction,
   message = COMMON_MESSAGE.UNAUTHORIZED
 ) => {
-  return next(new HttpError(message, HTTP_STATUS.UNAUTHORIZED));
-};
+  return next(new HttpError(message, HTTP_STATUS.UNAUTHORIZED))
+}
 
 export const forbidden = (
   next: NextFunction,
   message = COMMON_MESSAGE.FORBIDDEN
 ) => {
-  return next(new HttpError(message, HTTP_STATUS.UNAUTHORIZED));
-};
+  return next(new HttpError(message, HTTP_STATUS.UNAUTHORIZED))
+}

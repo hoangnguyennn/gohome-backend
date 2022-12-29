@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
-import { IUser } from '~/interfaces/IDocument';
-import { CollectionNames, UserTypes } from '~/interfaces/enums';
+import { Schema, model } from 'mongoose'
+import { IUser } from '~/interfaces/IDocument'
+import { CollectionNames, UserTypes } from '~/interfaces/enums'
 
 const userSchema = new Schema<IUser>(
   {
@@ -19,8 +19,8 @@ const userSchema = new Schema<IUser>(
       updatedAt: 'updatedAt'
     }
   }
-);
+)
 
-userSchema.index({ fullName: 'text' });
+userSchema.index({ fullName: 'text' })
 
-export default model<IUser>(CollectionNames.USER, userSchema);
+export default model<IUser>(CollectionNames.USER, userSchema)
